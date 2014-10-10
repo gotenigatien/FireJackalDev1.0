@@ -3,6 +3,8 @@ package character {
 	import flash.display.MovieClip;
 	import flash.utils.Timer;
 	import solid.decor.Tuiles;
+	import flash.filters.BevelFilter;
+	import flash.filters.BitmapFilterType;
 	public class CharObj extends MovieClip{
 		//-----------------------------------------------------
 		public var score:int;//A MODIFIER !!!!
@@ -29,24 +31,23 @@ package character {
 		public var died:Boolean;
 		protected var hostile:Boolean = false;
 		//public var Afilters:Array = new Array();
-		//private var myBevel:BevelFilter; 
+		private var myBevel:BevelFilter; 
 		//----------------------------------------------------------------------------------------
 		protected var T:int;
 		protected var objstock:Array;
-		//protected var enemyLayer:Sprite;
 		protected var tabFire:Array;
 		public function CharObj() {
 			T = Carte.T;
 			//----------------------------------------------
-			/*
+			
 			myBevel = new BevelFilter();
 			myBevel.type = BitmapFilterType.INNER;
-			myBevel.distance = 6;
-			myBevel.highlightColor =0xDE3F3F;  
-			myBevel.shadowColor = 0xDE3F3F;   
+			myBevel.distance = 5;
+			myBevel.highlightColor =0xFF3F3F;  
+			myBevel.shadowColor = 0xFF3F3F;   
 			myBevel.blurX = 1;    
 			myBevel.blurY = 1;
-			*/
+			
 		}
 		public function init():void {
 			tabFire = Carte.tabFire;
@@ -66,12 +67,12 @@ package character {
 		
 		protected function hurt():void {
 			if (imunTime.running) {
-				alpha = 1 - 0.65 * int(imunTime.currentCount % 2 != 0);
-				//filters =[myBevel];
+				alpha = 1 - 0.5 * int(imunTime.currentCount % 2 != 0);
+				//filters = [myBevel];
 			}
 			else {
 				imunTime.reset();
-			//	filters=[];
+				//filters=[];
 			}
 		}
 		

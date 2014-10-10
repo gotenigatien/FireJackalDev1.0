@@ -1,12 +1,12 @@
 ﻿package uig.menu {
-		import flash.display.*;
-		import flash.events.*;
-		import uig.titles.*;
+		import flash.display.Sprite;
+		import flash.events.MouseEvent;
+		import uig.menu.MainMenu;
 		import uig.titles.MainTitle;
 		//---------------------------------------------
 		
 	
-	public class Window extends MovieClip {
+	public class Window extends Sprite {
 		private var maintitle:MainTitle = new MainTitle();	
 		private var mainmenu:MainMenu = new MainMenu();	
 		

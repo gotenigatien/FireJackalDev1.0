@@ -28,7 +28,7 @@ package character {
 						a = i.force-this.life;
 						this.life = this.life - i.force;
 						i.force = a;
-						if (this.life <= 0) this.score = this.score+target.score;
+						if (this.life <= 0) target.score = this.score+target.score;
 					}
 				}
 			}
