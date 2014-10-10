@@ -65,6 +65,8 @@ package Interface.Level {
 			Interface.addChild(lifebar);Interface.addChild(powerBar);Interface.addChild(Iscore);Interface.addChild(gameicon);
 		}
 		protected function AddAllLayers():void {
+			 
+			stage.quality = "LOW";
 			addChild(grille)						// ajoute le décor 
 			grille.addChild(objLayer)							// ajoute le perso
 			grille.addChild(enemyLayer);

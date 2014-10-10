@@ -20,7 +20,7 @@ package Character {
 		private var finishTime:Timer = new Timer(200,5);
 		
 		public function GlobalEnemy() {
-			
+				
 		}
 		
 		protected function CheckProj():void {
