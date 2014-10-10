@@ -1,10 +1,11 @@
-﻿package Character.Playable {
+﻿package character.playable {
 	
-	import Character.CharObj;
-	import flash.display.MovieClip;
+	import character.CharObj;
+	import character.effect.jackal.Special_fire;
+	import engine.Carte;
+	import flash.display.Sprite;
 	import flash.utils.Timer;
-	import Engine.Carte;
-	import Character.Effect.Jackal.Special_fire;
+	import solid.decor.Tuiles;
 	
 	public class Jackal extends CharObj {
 		
@@ -27,7 +28,8 @@
 	private var runstrike:Boolean = false;
 	private var stormup:Boolean = false;
 	private var stormdown:Boolean = false;
-
+	
+		private var effectLayer:Sprite;
 	// variables mouvements
 	public var lateral:Boolean = false; 			// mouvement latéral 
 	public var saute:Boolean = false ;				// le héro saute
@@ -47,14 +49,11 @@
 	public function Jackal(ob:Array) {
 			objstock = ob;
 			// constructor code
-			gravite = 1;					// la gravité du jeu
-			speed = 4.5;					// la vitesse du héro
-			sens = 0;
-			power = 25;
-			di = 24;
-			hi = 16;
-			jumpPuls = 13.5;
-			life = 100;
+			gravite = 1; speed = 4.5; sens = 0;power = 25;di = 24;hi = 16;jumpPuls = 13.5;life = 100;
+		}
+		override public function init():void {
+			effectLayer = Carte.effectLayer;
+			tabFire = Carte.tabFire;
 		}
 		
 		public function GestureReaction(e:int):void{
@@ -77,6 +76,8 @@
 				haut=false;
 				break;
 				case 3:
+				break;
+			default:
 				break;
 			}
 		}
@@ -156,24 +157,16 @@
 		private function makedamage(type:int):void {
 			switch(type) {
 				case 1:
-				if (anim_strike1.currentFrame == 5) {
-					aT = true;
-				}	
+				if (anim_strike1.currentFrame == 5)	aT = true;
 				break;
 				case 2:
-				if (anim_strike2.currentFrame == 5) {
-					aT = true;
-				}	
+				if (anim_strike2.currentFrame == 5)aT = true;
 				break;
 				case 3:
-				if (anim_strike3.currentFrame == 5) {
-					aT = true;
-				}	
+				if (anim_strike3.currentFrame == 5)	aT = true;
 				break;
 				case 4:
-				if (anim_ball.currentFrame == 4) {
-					aT = true;
-				}	
+				if (anim_ball.currentFrame == 4) aT = true;
 				break;
 				case 5:
 				if (anim_special.currentFrame == 10) {
@@ -189,22 +182,16 @@
 			private function moveHero(dx:int):void{
 				if (!die) x += speed * dx; 					// déplace le perso sur X
 				
-				var X:Number = x;						// raccourci de programmation pour perso.x
-				var L:int;
-				var di:int = di;			
-				var hi:int = hi;							// ligne (grille) du point bas du perso
-				var C:int = (X+di*dx)/T;						// côté (grille) du perso concerné par la colission
-				var Cl:Array = new Array();
+				var X:Number = x;var L:int;var di:int = di; var C:int = (X + di * dx) / T;						// côté (grille) du perso concerné par la colission
 				Cl=checkLateral(C)
 				X = Cl[0];
 				L = Cl[1];
-				var i:int = L / T;
 				var Co:int = X / T;
 				var Ls:int = (y + T - 1) / T;
 				if (checkSlopes( objstock[Ls][Co], objstock[Ls][Co], Ls, Co)) 	 	return	;
 				
 				y += gravite; 							// déplace le perso sur Y
-				if (checkFall( L, X, di)) return ;
+				if (checkFall( L, di)) return ;
 				if (checkRoof((y-hi)/T,X,di)) return;
 				// gravite
 				if (gravite++>T) gravite=T							// limite la gravité max à la taille d'une tuile
@@ -212,40 +199,32 @@
 			}
 			//-------------------------------------------------------------------------------------------------------------------------------------------------------------
 		private function moveHero_strikefalling(dx:int):void{
-				var X:Number = x								// raccourci de programmation pour perso.x
-				var L:int;											// ligne (grille) du point bas du perso
-				var di:int = di;			
-				var hi:int = hi;								// ligne (grille) du point bas du perso
-				var C:int = (X+di*dx)/T;							// côté (grille) du perso concerné par la colission
-				var Cl:Array = new Array();
-				var i:int;
+				var X:Number = x; var L:int; var di:int = di; var C:int = (X + di * dx) / T;
 				
-				Cl=checkLateral(C)
-				X = Cl[0];
-				L = Cl[1];
-				
+				Cl = checkLateral(C); X = Cl[0]; L = Cl[1];
 				y += 2 * gravite; 							// déplace le perso
-				
+				var t:Tuiles;
 				// tombe
 				for (C = (X - di) / T; C < (X + di) / T; C++) {					// vérifies toutes colonnes (grille) sur lesquelles se tient le perso
-					if (objstock[L][C].item) {
-						if (this.life+objstock[L][C].life < 100) this.life = this.life+objstock[L][C].life;
+					if (objstock[L][C].fr) {t = objstock[L][C];
+					if (t.item) {
+						if (this.life+t.life < 100) this.life = this.life+t.life;
 						else this.life = 100;
-						if (this.power+objstock[L][C].power < 75) this.power = this.power + objstock[L][C].power;
+						if (this.power+t.power < 75) this.power = this.power + t.power;
 						else this.power = 75;
-						this.score = this.score+objstock[L][C].score;
-						objLayer.removeChild(objstock[L][C]);
+						this.score = this.score+t.score;
+						t.unleash();
 						objstock[L][C]=[];
 					}
-					if(objstock[L][C].destruct){
-						objstock[L][C].resist = objstock[L][C].resist - force[1];
-						if (objstock[L][C].resist <= 0) {
-							if (this.life+objstock[L][C].life < 100) this.life = this.life+objstock[L][C].life;
+					else if(t.destruct){
+						t.resist = t.resist - force[1];
+						if (t.resist <= 0) {
+							if (this.life+t.life < 100) this.life = this.life+t.life;
 							else this.life = 100;
-							if (this.power+objstock[L][C].power < 75) this.power = this.power + objstock[L][C].power;
+							if (this.power+t.power < 75) this.power = this.power +t.power;
 							else this.power = 75;
-							this.score = this.score+objstock[L][C].score;
-							objLayer.removeChild(objstock[L][C]);
+							this.score = this.score+t.score;
+							t.unleash();
 							objstock[L][C] = [];
 						}
 						else {
@@ -253,12 +232,13 @@
 						}
 						
 					}
-					if ((objstock[L][C].solide||objstock[L][C].cloud) && y>=(L-1)* T) {	
+					else if ((t.solide||t.cloud) && y>=(L-1)* T) {	
 						stike_rock.gotoAndPlay(2);		// blocs solides
 						y = (L-1)* T;							// position du perso sur Y
-						gravite = -8-int(objstock[L][C].jumper)*objstock[L][C].upPulse;
+						gravite = -8-int(t.jumper)*t.upPulse;
 						strikefalling = aT = false;
 						return				
+					}
 					}
 				}
 				// gravite
@@ -269,58 +249,49 @@
 			private function moveHero_tornadesidedown(dx:int):void{	
 				x += 7.5*dx; 								// déplace le perso sur X
 				
-				var Y:Number = y								// raccourci de programmation pour perso.x
-				var X:Number = x								// raccourci de programmation pour perso.x
-				var L:int;											// ligne (grille) du point bas du perso
-				var di:int = di;			
-				var hi:int = hi;								// ligne (grille) du point bas du perso
-				var C:int = (X+di*dx)/T;							// côté (grille) du perso concerné par la colission
-				var Cl:Array = new Array();
-				var i:int;
-				
+				var Y:Number = y; var X:Number = x; var L:int; var di:int = di;var C:int = (X + di * dx) / T;
 				Cl=checkLateral(C)
 				X = Cl[0];
 				L = Cl[1];
 				
 				Y = y += 1.5*gravite; 							// déplace le perso sur Y
-				
+				var t:Tuiles;
 				// tombe
 				for (C=(X-di)/T; C<(X+di)/T; C++) {					// vérifies toutes colonnes (grille) sur lesquelles se tient le perso	
-					if (objstock[L][C].item) {
-						if (this.life+objstock[L][C].life < 100) this.life = this.life+objstock[L][C].life;
-						else this.life = 100;
-						if (this.power+objstock[L][C].power < 75) this.power = this.power + objstock[L][C].power;
-						else this.power = 75;
-						this.score = this.score+objstock[L][C].score;
-						objLayer.removeChild(objstock[L][C]);
-						objstock[L][C]=[];
-					}
-					if(objstock[L][C].destruct){
-							if (aT) {
-								objstock[L][C].resist = objstock[L][C].resist - force[0]- force[1];
-								if (objstock[L][C].resist <= 0) {
-									if (this.life+objstock[L][C].life < 100) this.life = this.life+objstock[L][C].life;
-									else this.life = 100;
-									if (this.power+objstock[L][C].power < 75) this.power = this.power + objstock[L][C].power;
-									else this.power = 75;
-									this.score = this.score+objstock[L][C].score;
-									objLayer.removeChild(objstock[L][C]);
-									objstock[L][C]=[];
-								}
-								else {
-									aT = false;
+					if (objstock[L][C].fr) {t = objstock[L][C];
+						if (t.item) {
+							if (this.life+t.life < 100) this.life = this.life+t.life;
+							else this.life = 100;
+							if (this.power+t.power < 75) this.power = this.power + t.power;
+							else this.power = 75;
+							this.score = this.score+t.score;
+							t.unleash();
+							objstock[L][C]=[];
+						}
+						else if(t.destruct){
+								if (aT) {
+									t.resist = t.resist - force[0]- force[1];
+									if (t.resist <= 0) {
+										if (this.life+t.life < 100) this.life = this.life+t.life;
+										else this.life = 100;
+										if (this.power+t.power < 75) this.power = this.power + t.power;
+										else this.power = 75;
+										this.score = this.score+t.score;
+										t.unleash();
+										objstock[L][C]=[];
+									}
+									else {
+										aT = false;
+									}
 								}
 							}
+						else if ((t.solide||t.cloud) && y>=(L-1)* T) {			// blocs solides
+							y = (L-1)* T;							// position du perso sur Y
+							gravite=-1;
+							 tornadedown = aT = gauche=droite=false;
+							tornadedownTime.reset();
+							return				
 						}
-					if ((objstock[L][C].solide||objstock[L][C].cloud) && y>=(L-1)* T) {			// blocs solides
-						y = (L-1)* T;							// position du perso sur Y
-						gravite=-1;
-						 tornadedown = false;
-						 aT = false;
-						 gauche=false;
-						 droite=false;
-						tornadedownTime.reset();
-						return				
 					}
 				}
 				// gravite
@@ -332,60 +303,51 @@
 				
 				x += 8*dx; 								// déplace le perso sur X
 				
-				var Y:Number = y								// raccourci de programmation pour perso.x
-				var X:Number = x								// raccourci de programmation pour perso.x
-				var L:int;											// ligne (grille) du point bas du perso
-				var di:int = di;			
-				var hi:int = hi;								// ligne (grille) du point bas du perso
-				var C:int = (X+di*dx)/T;							// côté (grille) du perso concerné par la colission
-				var Cl:Array = new Array();
-				var i:int;
+				var Y:Number = y;var X:Number = x;var L:int;var di:int = di;var hi:int = hi;var C:int = (X+di*dx)/T;var i:int;
 				
 				Cl=checkLateral(C)
-				X = Cl[0];
-				L = Cl[1];
+				X = Cl[0];L = Cl[1];
 
 				if(jumptor) Y = y += 7*gravite; 							// déplace le perso sur Y
 				else Y = y += 11*gravite; 							// déplace le perso sur Y
-				
+				var t:Tuiles;
 				// touche plafond
 				if (gravite<0) {									// si le perso saute
 					L = (Y-hi)/T;									// case occupée par le haut du perso
 					for (i = (X - di) / T; i < (X + di) / T; i++) {				// cases occupées par les limites X du perso
-						if (objstock[L][i].item) {
-							if (this.life+objstock[L][i].life < 100) this.life = this.life+objstock[L][i].life;
-							else this.life = 100;
-							if (this.power+objstock[L][i].power < 75) this.power = this.power + objstock[L][i].power;
-							else this.power = 75;
-							this.score = this.score+objstock[L][i].score;
-							objLayer.removeChild(objstock[L][i]);
-							objstock[L][i]=[];
-						}
-						if (objstock[L][i].destruct) {
-							if (aT) {
-								objstock[L][i].resist = objstock[L][i].resist - force[0] - force[1];
-								if (objstock[L][i].resist <= 0) {
-									if (this.life+objstock[L][i].life < 100) this.life = this.life+objstock[L][i].life;
-									else this.life = 100;
-									if (this.power+objstock[L][i].power < 75) this.power = this.power + objstock[L][i].power;
-									else this.power = 75;
-									this.score = this.score+objstock[L][i].score;
-									objLayer.removeChild(objstock[L][i]);
-									objstock[L][i]=[];
-								}
-								else {
-									aT = false;
+						if (objstock[L][i].fr) {t = objstock[L][i];
+							if (t.item) {
+								if (this.life+t.life < 100) this.life = this.life+t.life;
+								else this.life = 100;
+								if (this.power+t.power < 75) this.power = this.power + t.power;
+								else this.power = 75;
+								this.score = this.score+t.score;
+								t.unleash();
+								objstock[L][i]=[];
+							}
+							else if (t.destruct) {
+								if (aT) {
+									t.resist = t.resist - force[0] - force[1];
+									if (t.resist <= 0) {
+										if (this.life+t.life < 100) this.life = this.life+t.life;
+										else this.life = 100;
+										if (this.power+t.power < 75) this.power = this.power + t.power;
+										else this.power = 75;
+										this.score = this.score+t.score;
+										t.unleash();
+										objstock[L][i]=[];
+									}
+									else {
+										aT = false;
+									}
 								}
 							}
-						}
-						if (objstock[L][i].solide) {							// si la case n'est pas vide
-							y = (L+2)* T-hi					// position du perso sur Y
-							gravite=1;
-							tornadeup=false;
-							jumptor = false;
-							jumptorTime.reset();
-							tornadeupTime.reset();
-							aT = false;
+							else if (t.solide) {							// si la case n'est pas vide
+								y = (L + 2) * T - hi;					// position du perso sur Y
+								gravite=1;
+								tornadeup=jumptor =aT = false;	
+								jumptorTime.reset();tornadeupTime.reset();
+							}
 						}
 					}
 				}

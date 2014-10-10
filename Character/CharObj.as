@@ -1,24 +1,21 @@
-package Character {
-	import Character.Effect.Jackal.Burning;
+package character {
+	import engine.Carte;
 	import flash.display.MovieClip;
-	import Engine.Carte;
-	import flash.display.Sprite;
-	import flash.filters.BevelFilter;
-	import flash.filters.BitmapFilterType;
 	import flash.utils.Timer;
-	import Solid.Decor.Tuiles;
+	import solid.decor.Tuiles;
 	public class CharObj extends MovieClip{
 		//-----------------------------------------------------
 		public var score:int;//A MODIFIER !!!!
 		//-------------------------------------------------
+		protected var Cl:Array = new Array();		
 		public var gravite:Number;					// la gravité du jeu
-		public var speed:Number;					// la vitesse du héro
+		protected var speed:Number;					// la vitesse du héro
 		public var sens:Number; 					// la direction du héro sur X
 		protected var sloping:Boolean=false;
 		protected var cloudfall:Boolean = false;
 		public var aT:Boolean = false;
 		public var powerattack:Boolean = false;
-		public var attackPrior:int=0;
+		//public var attackPrior:int=0;
 		public var force:Array = new Array(0, 0);
 		public var imunTime:Timer = new Timer(100,5);
 		public var imunity:Boolean=false;
@@ -26,19 +23,17 @@ package Character {
 		public var power:int;
 		public var di:int;
 		public var hi:int;
-		public var pulse:Boolean = false;
-		public var jumpPuls:Number;
+		protected var pulse:Boolean = false;
+		protected var jumpPuls:Number;
 		public var die:Boolean;
 		public var died:Boolean;
-		public var hostile:Boolean = false;
+		protected var hostile:Boolean = false;
 		//public var Afilters:Array = new Array();
-		private var myBevel:BevelFilter; 
+		//private var myBevel:BevelFilter; 
 		//----------------------------------------------------------------------------------------
 		protected var T:int;
 		protected var objstock:Array;
 		//protected var enemyLayer:Sprite;
-		protected var objLayer:Sprite;
-		protected var effectLayer:Sprite;
 		protected var tabFire:Array;
 		public function CharObj() {
 			T = Carte.T;
@@ -54,10 +49,7 @@ package Character {
 			*/
 		}
 		public function init():void {
-			objLayer = Carte.objLayer;
-			effectLayer = Carte.effectLayer;
 			tabFire = Carte.tabFire;
-			
 		}
 		public function motricite():void {
 			
@@ -84,78 +76,83 @@ package Character {
 		}
 		
 		protected function checkLateral(C:int):Array {
-			var dx:int = sens;										// ligne (grille) du point bas du perso
-			// raccourci de programmation pour persx
-			// latéral	
-			var L:int;						// côté (grille) du perso concerné par la colission
-			// latéral	
-			var L1:int=(y-hi)/T
-			var L2:int = y / T + 1;
-			for (L=L1; L<L2; L++) {					// vérifies toutes lignes (grille) sur lesquelles se tient le perso
-				if (objstock[L][C].solide) {								// si le bord renconte un bloc solide en latéral (prévoir multiples tuiles)
-					// colle le perso au bord du bloc
-					if(objstock[L][C].destruct){
-						if (aT) {
-							aT = false;
-							objstock[L][C].resist = objstock[L][C].resist - force[0] - force[1];
-							if (objstock[L][C].resist <= 0) {
-								if (life+objstock[L][C].life < 100) life = life+objstock[L][C].life;
-								else life = 100;
-								if (power+objstock[L][C].power < 75) power = power + objstock[L][C].power;
-								else power = 75;
-								score = score+objstock[L][C].score;
-								objLayer.removeChild(objstock[L][C]);
-								objstock[L][C]=[];
-							}
-						}
+			var L:int;var L1:int = (y - hi) / T;var L2:int = y / T + 1;
+			
+			var t:Tuiles;
+			for (L=L1; L<L2; L++) {
+				if (objstock[L][C].fr) {t = objstock[L][C];
+				if (t.solide) {				
+					checkLateral_sub1(t,L,C);// si le bord renconte un bloc solide en latéral (prévoir multiples tuiles)
 					}
-					if (sens == 1) x = C * T - di;
-					if (sens == -1) x = C * T + di+ T;
-					
+				else	if (t.item && !hostile) {
+					checkLateral_sub2(t,L,C);
 				}
-				if (objstock[L][C].item && !hostile) {
-					if (life+objstock[L][C].life < 100) life = life+objstock[L][C].life;
-					else life = 100;
-					if (power+objstock[L][C].power < 75) power = power + objstock[L][C].power;
-					else power = 75;
-					score = score+objstock[L][C].score;
-					objLayer.removeChild(objstock[L][C]);
-					objstock[L][C]=[];
-				}
+			}
 			}
 			return[x, L];	
 		}
-		
-		protected function checkFall(L:int,X:Number,di:int):Boolean {
+		private function checkLateral_sub1(t:Tuiles,L:int,C:int) {
+			var dx:int = sens;
+			if(t.destruct){
+				if (aT) {
+					aT = false;
+					t.resist = t.resist - force[0] - force[1];
+					if (t.resist <= 0) {
+					if (life+t.life < 100) life = life+t.life;
+					else life = 100;
+					if (power+t.power < 75) power = power + t.power;
+					else power = 75;
+					score = score+t.score;
+					t.unleash();
+					objstock[L][C] = [];						
+					}
+				}
+			}
+			if (dx == 1) x = C * T - di;
+			else if (dx == -1) x = C * T + di+ T;				
+		}
+		private function checkLateral_sub2(t:Tuiles,L:int,C:int) {
+			
+			if (this.life+t.life < 100) this.life = life+t.life;
+			else life = 100;
+			if (power+t.power < 75) power = power + t.power;
+			else power = 75;
+			score = score+t.score;
+			t.unleash();
+			objstock[L][C]=[];
+		}
+		protected function checkFall(L:int,di:int):Boolean {
 			var i:int;
 			var a:Boolean = false;
 			// tombe
-			for (i=(x-di)/T; i<(x+di)/T; i++) {
-				if (objstock[L][i].item&&!hostile) {
-						if (life+objstock[L][i].life < 100) life = life+objstock[L][i].life;
+			var i2:int = (x - di) / T;
+			var i3:int = (x + di) / T;
+			var t:Tuiles;
+			for (i = i2; i < i3; i++) {
+				if (objstock[L][i].fr) {t = objstock[L][i];
+				if (t.item&&!hostile) {
+						if (life+t.life < 100) life = life+t.life;
 						else life = 100;
-						if (power+objstock[L][i].power < 75) power = power + objstock[L][i].power;
+						if (power+t.power < 75) power = power + t.power;
 						else power = 75;
-						objLayer.removeChild(objstock[L][i]);
+						t.unleash();
 						objstock[L][i]=[];
 					}// vérifies toutes colonnes (grille) sur lsquelles se tient le perso	
-				else if (objstock[L][i].solide && y>=(L-1)* T&&!objstock[L][i].jumper) {			// blocs solides
+				else if (t.solide && y>=(L-1)* T&&!t.jumper) {			// blocs solides
 					y = (L-1)* T									// position du perso sur Y
 					gravite = -int(pulse) * jumpPuls;			// annule et autorise le saut
-					a = true;
-					return a;
+					a = true;return a;
 				}
-				else if (objstock[L][i].solide && y >= (L - 1) * T && objstock[L][i].jumper){
+				else if (t.solide && y >= (L - 1) * T && t.jumper){
 					y = (L-1)* T									// position du perso sur Y
 					gravite = - objstock[L][i].upPulse;			// annule et autorise le saut
-					a = true;
-					return a;
+					a = true;return a;
 				}
-				else if (objstock[L][i].cloud&&!cloudfall &&gravite>=0 && y >= (L - 1) * T && !objstock[L][i].jumper){
+				else if (t.cloud&&!cloudfall &&gravite>=0 && y >= (L - 1) * T && !t.jumper){
 					y = (L-1)* T									// position du perso sur Y
 					gravite = -int(pulse) * jumpPuls;			// annule et autorise le saut
-					a = true;
-					return a;
+					a = true;return a;
+				}
 				}
 			}
 			return a;
@@ -165,22 +162,25 @@ package Character {
 			// touche plafond
 			var i:int;
 			var a:Boolean = false;
-			if (gravite<0) {									// si le perso saute
-				for (i=(X-di)/T; i<(X+di)/T; i++) {				// cases occupées par les limites X du perso
-					if (objstock[H][i].item&&!hostile) {
-						if (life+objstock[H][i].life < 100) life = life+objstock[H][i].life;
-						else life = 100;
-						if (power+objstock[H][i].power < 75) power = power + objstock[H][i].power;
-						else power = 75;
-						score = score+objstock[H][i].score;
-						objLayer.removeChild(objstock[H][i]);
-						objstock[H][i]=[];
-					}
-					else if (objstock[H][i].solide) {							// si la case n'est pas vide
-						y = (H+2)* T-hi					// position du perso sur Y
-						gravite = 1;								// arrête le saut
-						a = true;
-						return a;
+			var t:Tuiles;
+			if (gravite<0) {		// si le perso saute
+				for (i=(X-di)/T; i<(X+di)/T; i++) {
+					if (objstock[H][i].fr) { t = objstock[H][i];
+						if (t.item&&!hostile) {
+							if (life+t.life < 100) life = life+t.life;
+							else life = 100;
+							if (power+t.power < 75) power = power + t.power;
+							else power = 75;
+							score = score+t.score;
+							t.unleash();
+							objstock[H][i]=[];
+						}
+						else if (t.solide) {							// si la case n'est pas vide
+							y = (H+2)* T-hi					// position du perso sur Y
+							gravite = 1;								// arrête le saut
+							a = true;
+							return a;
+						}
 					}
 				}
 			}
@@ -188,26 +188,27 @@ package Character {
 		}
 		
 		protected function checkSlopes(A:Object, B:Object, L:int, C:int):Boolean {
-				if (gravite>0){
-					if (B.slope==-1 && y>=(L-C-1)* T-x && hit((L-C-1)* T+x-di,B.slope,true)) 	        return true
-					if (B.slope==1 && y>=(L+C+1)* T-x && hit((L+C)* T-x+di,B.slope,true)) 	        return true		
+			var le:int = objstock.length;	
+			if (gravite>0){
+					if (B.slope==-1 && y>=(L-C-1)* T-x && hit((L-C-1)* T+x-di,true)) 	        return true
+					if (B.slope==1 && y>=(L+C+1)* T-x && hit((L+C)* T-x+di,true)) 	        return true		
 				} else if (gravite==0){
 					for (var i:int=0;i<2;i++){	
-						if (L+i<objstock.length){	
-						if (objstock[L+i][C].slope==-1 && hit((L+i-C-1)* T+x-di,objstock[L+i][C].slope,true)) 	return true
-						if (objstock[L+i][C].slope==1 && hit((L+i+C)* T-x-di,objstock[L+i][C].slope,true))      return true				
+						if (L+i<le){	
+						if (objstock[L+i][C].slope==-1 && hit((L+i-C-1)* T+x-di,true)) 	return true
+						if (objstock[L+i][C].slope==1 && hit((L+i+C)* T-x-di,true))      return true				
 						}
 					}
-					if (B.solide && !objstock[L-1][C].solide && hit((L-1)* T+di,B.slope)) 		return true
-					if ((objstock[L][C+1].slope==1 || objstock[L][C-1].slope==-1) && hit(L* T,B.slope)){		
+					if (B.solide && !objstock[L-1][C].solide && hit((L-1)* T+di)) 		return true
+					if ((objstock[L][C+1].slope==1 || objstock[L][C-1].slope==-1) && hit(L* T)){		
 						if (!A.jumper && A.solide)			        return true
 					}
 				} 
-				sloping=false
-			return false
+			sloping = false;
+			return false;
 		}
 		
-		protected function hit(Y:Number,next:int=0,S:Boolean=false):Boolean{
+		protected function hit(Y:Number,S:Boolean=false):Boolean{
 			//rotation=-45*next*int(gravite>=0);
 			y = Y		
 			gravite =-int(pulse) * jumpPuls;

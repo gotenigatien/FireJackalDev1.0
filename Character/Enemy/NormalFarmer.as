@@ -1,13 +1,8 @@
-﻿package  Character.Enemy{
+﻿package  character.enemy{
 	
-	import Character.CharObj;
-	import Character.Effect.Jackal.Burning;
-	import Character.GlobalEnemy;
-	import flash.display.MovieClip;
-	import flash.events.Event;
-	import flash.utils.Timer;
+	import character.GlobalEnemy;
 	import flash.events.TimerEvent;
-	import Engine.Carte;
+	import flash.utils.Timer;
 	
 	public class NormalFarmer extends GlobalEnemy {
 		

@@ -1,34 +1,24 @@
-package Character {
-	import Character.Effect.Jackal.Burning;
-	import flash.display.MovieClip;
-	import Engine.Carte;
+package character {
+	import engine.Carte;
+	import flash.profiler.showRedrawRegions;
 	import flash.utils.Timer;
-	
 	public class GlobalEnemy extends CharObj{
-		
-		
+			
 		public var target:CharObj = new CharObj();
 		public var IAtype:int;
 		public var Etype:int;
 		public var InPos:Array;
-		
-		
 		protected var left:Boolean;
 		protected var right:Boolean;
 		protected var aucune:Boolean;
 		protected var lk:Number;
 		private var finishTime:Timer = new Timer(200,5);
-		
 		public function GlobalEnemy() {
-				
+		showRedrawRegions(true, 0x0000FF);
 		}
 		
 		protected function CheckProj():void {
-			var i:Object;
-			var d:Number;
-			var dy:Number;
-			var a;
-			var burning:Object;
+			var i:Object;var d:Number;var dy:Number;var a;
 			for each(i in Carte.tabFire){
 				d =  Math.abs( i.x - this.x - this.di);
 				dy = Math.abs(i.y - this.y);
@@ -56,22 +46,15 @@ package Character {
 		}
 		protected function moveEnemy():void {
 				x += speed * sens;
-				var Cl:Array = new Array();
-				var C:int = (x + di * sens) / T;
-				var X:Number;
-				var L:int;
+				var C:int = (x + di * sens) / T; var X:Number;var L:int;
 				Cl = checkLateral( C);
-				X = Cl[0];
-				L = Cl[1];
-				var i:int = L / T;
-				var Co:int = x / T;
-				var Ls:int = (y + T - 1) / T;
+				X = Cl[0];L = Cl[1];
+				var Co:int = X / T;var Ls:int = (y + T - 1) / T;
 				if (checkSlopes( objstock[Ls][Co], objstock[Ls][Co], Ls, Co)) 	 	return	;
 				
 				y += gravite; 							// déplace le perso sur Y
-				if (checkFall( L, X, di)) return ;
+				if (checkFall( L, di)) return ;
 				if (checkRoof( (y - hi) / T, X, di)) return;
-				
 				// gravite
 				if (gravite++ > T) gravite = T;							// limite la gravité max à la taille d'une tuile
 		}

@@ -1,8 +1,6 @@
-﻿package  Character.Effect.Jackal{
+﻿package  character.effect.jackal{
 	
 	import flash.display.MovieClip;
-	import Engine.Carte;
-	import flash.events.Event;
 	
 	public class Burning extends MovieClip {
 		

@@ -1,11 +1,8 @@
-﻿package Character.Enemy {
+﻿package character.enemy {
 	
 	//import Character.Effect.Goat.Charge_aura;
 	//import Character.Effect.Goat.Charge_particule;
-	import Character.GlobalEnemy;
-	import flash.display.Bitmap;
-	import flash.display.BitmapData;
-	import flash.display.MovieClip;
+	import character.GlobalEnemy;
 	import flash.utils.Timer;
 	
 	public class Goat extends GlobalEnemy {

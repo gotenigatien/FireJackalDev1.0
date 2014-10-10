@@ -1,8 +1,6 @@
-package Engine {
-	import Character.Playable.Jackal;
-	import flash.display.MovieClip;
+package engine {
+	import character.playable.Jackal;
 	import flash.display.Sprite;
-	import Solid.Decor.Tuiles;
 	public class Scrolling {
 		
 		private var jackal:Jackal;
@@ -76,8 +74,8 @@ package Engine {
 
 		}
 		public function run():void {
-			var C:int=0;
-			var L:int=0;
+			//var C:int=0;
+			//var L:int=0;
 		 
 			if(mapW>Gx){
 				var X:Number = 	 	jackal.x;

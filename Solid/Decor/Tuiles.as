@@ -1,4 +1,4 @@
-﻿package Solid.Decor {
+﻿package solid.decor {
 	
 	import flash.display.MovieClip;
 	
@@ -22,13 +22,17 @@
 		public function Tuiles() {
 			// constructor code
 		}
-		public function destroy() {
+		public function destroy():void {
 			fr = 0;
 			solide = false;
 			item = false;
 			destruct = false;
 			gotoAndStop(10);
 		}
+		public function unleash():void {
+			parent.removeChild(this);
+		}
+		
 	}
 	
 }

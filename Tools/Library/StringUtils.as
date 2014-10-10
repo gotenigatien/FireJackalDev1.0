@@ -1,4 +1,4 @@
-﻿package Tools.Library
+﻿package tools.library
 {
 	
 	public class StringUtils

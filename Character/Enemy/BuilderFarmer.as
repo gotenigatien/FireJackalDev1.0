@@ -1,13 +1,11 @@
-﻿package  Character.Enemy{
+﻿package  character.enemy{
 	
-	import Character.CharObj;
-	import Character.GlobalEnemy;
-	import flash.display.MovieClip;
-	import flash.events.Event;
-	import flash.utils.Timer;
+	import character.GlobalEnemy;
+	import engine.Carte;
+	import flash.display.Sprite;
 	import flash.events.TimerEvent;
-	import Engine.Carte;
-	import Solid.Decor.Tuiles;
+	import flash.utils.Timer;
+	import solid.decor.Tuiles;
 	
 	
 	public class BuilderFarmer extends GlobalEnemy {
@@ -15,19 +13,14 @@
 		
 		public function BuilderFarmer(ob:Array) {
 			objstock = ob;
-			gravite = 1;					// la gravité du jeu
-			speed = 1;					// la vitesse du héro
-			sens = 0;
-			di =18;
-			hostile = true;
-			hi = 32;
-			jumpPuls = 12;
-			life = 3;
-			force = [2, 0];
-			score = 20;
+			gravite = 1;sens = 0;di =18;hostile = true;hi = 32;jumpPuls = 12;life = 3;force = [2, 0];score = 20;
 			BuildTime.addEventListener(TimerEvent.TIMER_COMPLETE, putCase);
 			hitTime.addEventListener(TimerEvent.TIMER_COMPLETE, finishHit);
 			// constructor code
+		}
+		override public function init():void {
+			objLayer = Carte.objLayer;
+			tabFire = Carte.tabFire;
 		}
 		private var walk:Boolean;
 		private var run:Boolean;
@@ -38,14 +31,13 @@
 		private var dy:Number;
 			
 		private var build:Boolean;
-		private var ra;
-	
+		private var ra:Number;
+		private var objLayer:Sprite;
 		private var vwalk:Boolean;
 		private var walkTime:Timer = new Timer(800, 1);
 		private var hitTime:Timer = new Timer(465, 1);
 		private var Cooldown:Timer = new Timer(1000, 1);
 		private var BuildTime:Timer = new Timer(1600, 1);
-
 		private var finishTime:Timer = new Timer(200,10);
 		
 		override public function motricite():void {
@@ -174,7 +166,7 @@
 			t.solide = t.destruct = true;	
 			t.resist = 1;t.score = 2;t.fr = 9;
 			objstock[L][C] = t;
-			Carte.objLayer.addChild(objstock[L][C]);
+			objLayer.addChild(objstock[L][C]);
 			}
 		}
 	}

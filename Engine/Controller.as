@@ -1,12 +1,12 @@
-package Engine {
+package engine {
 	public class Controller {
-		import Character.Playable.Jackal;
+		import character.playable.Jackal;
 		import flash.events.MouseEvent;
-		import flash.utils.Timer;
 		import flash.events.TimerEvent;
+		import flash.events.TransformGestureEvent;
 		import flash.ui.Multitouch;
 		import flash.ui.MultitouchInputMode;
-		import flash.events.TransformGestureEvent;
+		import flash.utils.Timer;
 		
 		private var jackal:Jackal;
 		private var lpos:Array=new Array(0,0);

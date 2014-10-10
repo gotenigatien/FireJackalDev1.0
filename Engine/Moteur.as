@@ -1,8 +1,8 @@
-package Engine {
+package engine {
 	public class Moteur {
-		import Character.CharObj;
-		import Character.GlobalEnemy;
-		import Character.Playable.Jackal;
+		import character.CharObj;
+		import character.GlobalEnemy;
+		import character.playable.Jackal;
 		import flash.display.Sprite;
 		import flash.events.Event;
 		

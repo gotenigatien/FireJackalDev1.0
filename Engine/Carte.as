@@ -1,10 +1,5 @@
-package Engine {
-	import Character.Playable.Jackal;
+package engine {
 	import flash.display.Sprite;
-	import Interface.Interface.GameIcon;
-	import Interface.Interface.LifeBar;
-	import Interface.Interface.PowerBar;
-	import Interface.Interface.Score;
 	public class Carte {
 			
 		public static const T:int = 32;

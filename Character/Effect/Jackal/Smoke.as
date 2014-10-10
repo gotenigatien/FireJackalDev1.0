@@ -1,4 +1,4 @@
-﻿package Character.Effect.Jackal {
+﻿package character.effect.jackal {
 	
 	import flash.display.MovieClip;
 	import flash.events.Event;

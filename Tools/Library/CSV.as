@@ -15,12 +15,11 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
 
-package Tools.Library
+package tools.library
 {
 	
-	import flash.net.*
-	import flash.events.*
-	import Tools.Library.StringUtils;
+	import flash.events.*;
+	import flash.net.*;
 	
 	/**
 	 *   TODO Package description ...

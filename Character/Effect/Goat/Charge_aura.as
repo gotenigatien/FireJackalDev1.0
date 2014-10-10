@@ -1,4 +1,4 @@
-﻿package Character.Effect.Goat {
+﻿package character.effect.goat {
 	
 	import flash.display.MovieClip;
 	import flash.events.Event;
