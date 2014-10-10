@@ -15,8 +15,8 @@ package engine {
 		private var dT:int;
 		//-------------------------------------------------------------				
 		// constantes de la partie
-		private var Gx:int =	24		
-		private var Gy:int = 	15		
+		private var Gx:int =	24;	
+		private var Gy:int = 	15;		
 		private var cX:int = 	Gx / 2;	
 		private var cY:int = 	Gy / 2;	
 		private var Gw:int ;					
@@ -44,12 +44,7 @@ package engine {
 		}
 		
 		public function creeZone():void{ 
-			var i:int
-			var j:int
-			var I:int
-			var J:int
-			var f:int
-		 
+			var i, j, I, J, f:int;
 			if(mapW>Gx){
 				if (jackal.x<cX*T) I = 0
 				else if (jackal.x>W-cX*T) I = mapW-Gx-1
@@ -65,7 +60,7 @@ package engine {
 				for (j=0; j<Gy+1; j++){			
 					objStock[J][I].name = "t_"+j+"_"+i
 					if(objStock[J] && objStock[J][I]){
-						f = objStock[J][I].fr; 
+						//f = objStock[J][I].fr; 
 					}
 					J++
 				}

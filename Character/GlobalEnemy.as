@@ -1,6 +1,5 @@
 package character {
 	import engine.Carte;
-	import flash.profiler.showRedrawRegions;
 	import flash.utils.Timer;
 	public class GlobalEnemy extends CharObj{
 			
@@ -14,7 +13,6 @@ package character {
 		protected var lk:Number;
 		private var finishTime:Timer = new Timer(200,5);
 		public function GlobalEnemy() {
-		showRedrawRegions(true, 0x0000FF);
 		}
 		
 		protected function CheckProj():void {

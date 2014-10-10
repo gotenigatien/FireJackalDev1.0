@@ -17,6 +17,7 @@ package engine {
 			enemyStock = es;
 			jackal = ja;
 			scrolling.initialise(ja,m,es,g);
+			scrolling.run();
 			
 		}
 		
@@ -33,7 +34,6 @@ package engine {
 					enemyStock.slice(i, 1);
 				}
 			}
-			scrolling.run();
 			jackal.motricite();
 		}
 		
