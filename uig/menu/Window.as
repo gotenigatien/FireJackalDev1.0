@@ -1,8 +1,8 @@
 ﻿package uig.menu {
-		import flash.events.Event;
-		import flash.display.MovieClip;
+		import flash.display.*;
+		import flash.events.*;
+		import uig.titles.*;
 		import uig.titles.MainTitle;
-		import flash.events.MouseEvent;
 		//---------------------------------------------
 		
 	

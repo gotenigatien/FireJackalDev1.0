@@ -11,6 +11,7 @@
 		}
 		public function start() {
 		load_tablevel("../../Ressources/Levels/1_1.csv");
+		
 		}
 		private function initialise() {
 			createDecor();
