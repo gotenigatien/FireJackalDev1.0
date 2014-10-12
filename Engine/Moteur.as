@@ -9,15 +9,16 @@ package engine {
 		private var enemyStock:Array;
 		private var scrolling:Scrolling;
 		private var jackal:Jackal;
-		
+		private var enemyLayer:Sprite;
 		public function Moteur() {
 		}
-		public function initialise(ja:Jackal, es:Array, scro:Scrolling,m:Array,g:Sprite) {
+		public function initialise(ja:Jackal, es:Array, scro:Scrolling) {
 			scrolling = scro;
 			enemyStock = es;
 			jackal = ja;
-			scrolling.initialise(ja,m,es,g);
-			
+		}
+		public function initLayer(eL:Sprite) {
+			enemyLayer = eL;
 		}
 		
 		//------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -29,7 +30,7 @@ package engine {
 				enemyStock[i].motricite();
 				}
 				if (enemyStock[i].died&&enemyStock[i].stage) {
-					Carte.enemyLayer.removeChild(enemyStock[i]);
+					enemyLayer.removeChild(enemyStock[i]);
 					enemyStock.slice(i, 1);
 				}
 			}

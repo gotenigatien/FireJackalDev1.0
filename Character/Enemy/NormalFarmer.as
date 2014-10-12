@@ -7,8 +7,8 @@
 	public class NormalFarmer extends GlobalEnemy {
 		
 		
-		public function NormalFarmer(ob:Array) {
-			objstock = ob;
+		public function NormalFarmer(os:Array) {
+			blocstock = os;
 			gravite = 1;					// la gravité du jeu
 			speed = 1;					// la vitesse du héro
 			sens = 0;

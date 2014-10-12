@@ -2,7 +2,7 @@ package character {
 	import engine.Carte;
 	import flash.display.MovieClip;
 	import flash.utils.Timer;
-	import solid.decor.Tuiles;
+	import solid.decor.Bloc;
 	import flash.filters.BevelFilter;
 	import flash.filters.BitmapFilterType;
 	public class CharObj extends MovieClip{
@@ -34,7 +34,7 @@ package character {
 		private var myBevel:BevelFilter; 
 		//----------------------------------------------------------------------------------------
 		protected var T:int;
-		protected var objstock:Array;
+		protected var blocstock:Array;
 		protected var tabFire:Array;
 		public function CharObj() {
 			T = Carte.T;
@@ -49,8 +49,8 @@ package character {
 			myBevel.blurY = 1;
 			
 		}
-		public function init():void {
-			tabFire = Carte.tabFire;
+		public function init(tb:Array):void {
+			tabFire = tb;
 		}
 		public function motricite():void {
 			
@@ -68,22 +68,22 @@ package character {
 		protected function hurt():void {
 			if (imunTime.running) {
 				alpha = 1 - 0.5 * int(imunTime.currentCount % 2 != 0);
-				//filters = [myBevel];
+				filters = [myBevel];
 			}
 			else {
 				imunTime.reset();
-				//filters=[];
+				filters=[];
 			}
 		}
 		
 		protected function checkLateral(C:int):Array {
 			var L:int;var L1:int = (y - hi) / T;var L2:int = y / T + 1;
 			
-			var t:Tuiles;
+			var t:Bloc;
 			for (L=L1; L<L2; L++) {
-				if (objstock[L][C].fr) {t = objstock[L][C];
+				if (blocstock[L][C].fr) {t = blocstock[L][C];
 				if (t.solide) {				
-					checkLateral_sub1(t,L,C);// si le bord renconte un bloc solide en latéral (prévoir multiples tuiles)
+					checkLateral_sub1(t,L,C);// si le bord renconte un bloc solide en latéral (prévoir multiples Bloc)
 					}
 				else	if (t.item && !hostile) {
 					checkLateral_sub2(t,L,C);
@@ -92,7 +92,7 @@ package character {
 			}
 			return[x, L];	
 		}
-		private function checkLateral_sub1(t:Tuiles,L:int,C:int) {
+		private function checkLateral_sub1(t:Bloc,L:int,C:int) {
 			var dx:int = sens;
 			if(t.destruct){
 				if (aT) {
@@ -104,23 +104,23 @@ package character {
 					if (power+t.power < 75) power = power + t.power;
 					else power = 75;
 					score = score+t.score;
-					t.unleash();
-					objstock[L][C] = [];						
+					//t.unleash();
+					blocstock[L][C] = [];						
 					}
 				}
 			}
 			if (dx == 1) x = C * T - di;
 			else if (dx == -1) x = C * T + di+ T;				
 		}
-		private function checkLateral_sub2(t:Tuiles,L:int,C:int) {
+		private function checkLateral_sub2(t:Bloc,L:int,C:int) {
 			
 			if (this.life+t.life < 100) this.life = life+t.life;
 			else life = 100;
 			if (power+t.power < 75) power = power + t.power;
 			else power = 75;
 			score = score+t.score;
-			t.unleash();
-			objstock[L][C]=[];
+			//t.unleash();
+			blocstock[L][C]=[];
 		}
 		protected function checkFall(L:int,di:int):Boolean {
 			var i:int;
@@ -128,32 +128,32 @@ package character {
 			// tombe
 			var i2:int = (x - di) / T;
 			var i3:int = (x + di) / T;
-			var t:Tuiles;
+			var t:Bloc;
 			for (i = i2; i < i3; i++) {
-				if (objstock[L][i].fr) {t = objstock[L][i];
-				if (t.item&&!hostile) {
-						if (life+t.life < 100) life = life+t.life;
-						else life = 100;
-						if (power+t.power < 75) power = power + t.power;
-						else power = 75;
-						t.unleash();
-						objstock[L][i]=[];
-					}// vérifies toutes colonnes (grille) sur lsquelles se tient le perso	
-				else if (t.solide && y>=(L-1)* T&&!t.jumper) {			// blocs solides
-					y = (L-1)* T									// position du perso sur Y
-					gravite = -int(pulse) * jumpPuls;			// annule et autorise le saut
-					a = true;return a;
-				}
-				else if (t.solide && y >= (L - 1) * T && t.jumper){
-					y = (L-1)* T									// position du perso sur Y
-					gravite = - objstock[L][i].upPulse;			// annule et autorise le saut
-					a = true;return a;
-				}
-				else if (t.cloud&&!cloudfall &&gravite>=0 && y >= (L - 1) * T && !t.jumper){
-					y = (L-1)* T									// position du perso sur Y
-					gravite = -int(pulse) * jumpPuls;			// annule et autorise le saut
-					a = true;return a;
-				}
+				if (blocstock[L][i].fr) {t = blocstock[L][i];
+					if (t.item&&!hostile) {
+							if (life+t.life < 100) life = life+t.life;
+							else life = 100;
+							if (power+t.power < 75) power = power + t.power;
+							else power = 75;
+							//t.unleash();
+							blocstock[L][i]=[];
+						}// vérifies toutes colonnes (grille) sur lsquelles se tient le perso	
+					else if (t.solide && y>=(L-1)* T&&!t.jumper) {			// blocs solides
+						y = (L-1)* T									// position du perso sur Y
+						gravite = -int(pulse) * jumpPuls;			// annule et autorise le saut
+						a = true;return a;
+					}
+					else if (t.solide && y >= (L - 1) * T && t.jumper){
+						y = (L-1)* T									// position du perso sur Y
+						gravite = - blocstock[L][i].upPulse;			// annule et autorise le saut
+						a = true;return a;
+					}
+					else if (t.cloud&&!cloudfall &&gravite>=0 && y >= (L - 1) * T && !t.jumper){
+						y = (L-1)* T									// position du perso sur Y
+						gravite = -int(pulse) * jumpPuls;			// annule et autorise le saut
+						a = true;return a;
+					}
 				}
 			}
 			return a;
@@ -163,18 +163,18 @@ package character {
 			// touche plafond
 			var i:int;
 			var a:Boolean = false;
-			var t:Tuiles;
+			var t:Bloc;
 			if (gravite<0) {		// si le perso saute
 				for (i=(X-di)/T; i<(X+di)/T; i++) {
-					if (objstock[H][i].fr) { t = objstock[H][i];
+					if (blocstock[H][i].fr) { t = blocstock[H][i];
 						if (t.item&&!hostile) {
 							if (life+t.life < 100) life = life+t.life;
 							else life = 100;
 							if (power+t.power < 75) power = power + t.power;
 							else power = 75;
 							score = score+t.score;
-							t.unleash();
-							objstock[H][i]=[];
+							//t.unleash();
+							blocstock[H][i]=[];
 						}
 						else if (t.solide) {							// si la case n'est pas vide
 							y = (H+2)* T-hi					// position du perso sur Y
@@ -189,19 +189,19 @@ package character {
 		}
 		
 		protected function checkSlopes(A:Object, B:Object, L:int, C:int):Boolean {
-			var le:int = objstock.length;	
+			var le:int = blocstock.length;	
 			if (gravite>0){
 					if (B.slope==-1 && y>=(L-C-1)* T-x && hit((L-C-1)* T+x-di,true)) 	        return true
 					if (B.slope==1 && y>=(L+C+1)* T-x && hit((L+C)* T-x+di,true)) 	        return true		
 				} else if (gravite==0){
 					for (var i:int=0;i<2;i++){	
 						if (L+i<le){	
-						if (objstock[L+i][C].slope==-1 && hit((L+i-C-1)* T+x-di,true)) 	return true
-						if (objstock[L+i][C].slope==1 && hit((L+i+C)* T-x-di,true))      return true				
+						if (blocstock[L+i][C].slope==-1 && hit((L+i-C-1)* T+x-di,true)) 	return true
+						if (blocstock[L+i][C].slope==1 && hit((L+i+C)* T-x-di,true))      return true				
 						}
 					}
-					if (B.solide && !objstock[L-1][C].solide && hit((L-1)* T+di)) 		return true
-					if ((objstock[L][C+1].slope==1 || objstock[L][C-1].slope==-1) && hit(L* T)){		
+					if (B.solide && !blocstock[L-1][C].solide && hit((L-1)* T+di)) 		return true
+					if ((blocstock[L][C+1].slope==1 || blocstock[L][C-1].slope==-1) && hit(L* T)){		
 						if (!A.jumper && A.solide)			        return true
 					}
 				} 

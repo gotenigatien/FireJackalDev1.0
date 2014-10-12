@@ -14,19 +14,10 @@
 		
 		}
 		private function initialise() {
-			createDecor();
-			//objStock;
-			player = new Jackal(objStock);
-			player.x=100;player.y=250;						
-			createEnemy();
-			moteur.initialise(player, enemyStock,scrolling,tab_level,grille);
-			controller.initialise(player);
-			initInterface();
-		}
-		private function createlevel() {		
-		// liste d'affichage
-		createInterface();
-		AddAllLayers();
+			BitInit();
+			player.x=100;player.y=250;
+			createInterface();
+			AddAllLayers();
 		}
 		
 		private function load_tablevel(level:String) : void
@@ -51,8 +42,6 @@
 		csvlib.removeEventListener(Event.COMPLETE, completeLoadEnemies);
 		tab_enemy = csvlib.receive();
 		initialise();
-		createlevel();
-		controller.run();
 		this.addEventListener(Event.ENTER_FRAME, moteur.run);			// pilote
 		}
 		

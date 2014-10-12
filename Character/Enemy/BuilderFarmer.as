@@ -11,17 +11,17 @@
 	public class BuilderFarmer extends GlobalEnemy {
 		
 		
-		public function BuilderFarmer(ob:Array) {
-			objstock = ob;
+		public function BuilderFarmer(os:Array) {
+			blocstock = os;
 			gravite = 1;sens = 0;di =18;hostile = true;hi = 32;jumpPuls = 12;life = 3;force = [2, 0];score = 20;
 			BuildTime.addEventListener(TimerEvent.TIMER_COMPLETE, putCase);
 			hitTime.addEventListener(TimerEvent.TIMER_COMPLETE, finishHit);
 			// constructor code
 		}
-		override public function init():void {
+		/*override public function init():void {
 			objLayer = Carte.objLayer;
 			tabFire = Carte.tabFire;
-		}
+		}*/
 		private var walk:Boolean;
 		private var run:Boolean;
 		private var s_hit:Boolean;
@@ -32,7 +32,7 @@
 			
 		private var build:Boolean;
 		private var ra:Number;
-		private var objLayer:Sprite;
+		//private var objLayer:Sprite;
 		private var vwalk:Boolean;
 		private var walkTime:Timer = new Timer(800, 1);
 		private var hitTime:Timer = new Timer(465, 1);
@@ -144,29 +144,27 @@
 		}
 		
 		private function construct():void {
-				var C:int = (x+di*-scaleX) / T-scaleX;var L:int = (y / T);
-				if (!objstock[L][C].fr) {
-					if(!BuildTime.running){
-						BuildTime.start();build = true;	return;
-					}
+		var C:int = (x+di*-scaleX) / T-scaleX;var L:int = (y / T);
+			if (blocstock[L][C].fr!=0) {
+				if(!BuildTime.running){
+			//		BuildTime.start();build = true;	return;
 				}
-				else build = false;
-				
-				
 			}
+			else build = false;	
+		}
 		private function finishHit(event:TimerEvent):void
 		{	Cooldown.start();aT = false;
 		}
 		private function putCase(event:TimerEvent):void
 		{	var C:int = (x + di * -scaleX) / T - scaleX;var L:int = (y / T);
-			if(!objstock[L][C].fr){
+			if(blocstock[L][C].fr!=0){
 			var t= new Tuiles();	
 			t.x = C * T;t.y = L * T;				// position s
 			t.gotoAndStop(9);		// frame à afficher
 			t.solide = t.destruct = true;	
 			t.resist = 1;t.score = 2;t.fr = 9;
-			objstock[L][C] = t;
-			objLayer.addChild(objstock[L][C]);
+			blocstock[L][C] = t;
+			//objLayer.addChild(blocstock[L][C]);
 			}
 		}
 	}

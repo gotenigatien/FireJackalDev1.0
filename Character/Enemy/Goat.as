@@ -18,8 +18,8 @@
 		private var d:Number;
 		private var dy:Number;
 		
-		public function Goat(ob:Array) {
-			objstock = ob;
+		public function Goat(os:Array) {
+			blocstock = os;
 			// constructor code
 			gravite = 1;					// la gravité du jeu
 			speed = 3;					// la vitesse du héro

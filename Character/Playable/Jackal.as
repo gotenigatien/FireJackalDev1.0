@@ -5,7 +5,7 @@
 	import engine.Carte;
 	import flash.display.Sprite;
 	import flash.utils.Timer;
-	import solid.decor.Tuiles;
+	import solid.decor.Bloc;
 	
 	public class Jackal extends CharObj {
 		
@@ -29,7 +29,6 @@
 	private var stormup:Boolean = false;
 	private var stormdown:Boolean = false;
 	
-		private var effectLayer:Sprite;
 	// variables mouvements
 	public var lateral:Boolean = false; 			// mouvement latéral 
 	public var saute:Boolean = false ;				// le héro saute
@@ -46,15 +45,15 @@
 		public var special1Time:Timer=new Timer(650,1);
 	//--------------------------------------------------------------------------------------------------------------------------------------------------------------
 	
-	public function Jackal(ob:Array) {
-			objstock = ob;
+	public function Jackal(os:Array) {
+			blocstock = os;
 			// constructor code
 			gravite = 1; speed = 4.5; sens = 0;power = 25;di = 24;hi = 16;jumpPuls = 13.5;life = 100;
 		}
-		override public function init():void {
+		/*override public function init():void {
 			effectLayer = Carte.effectLayer;
 			tabFire = Carte.tabFire;
-		}
+		}*/
 		
 		public function GestureReaction(e:int):void{
 			switch (e){
@@ -96,8 +95,8 @@
 				speed = 5.5 -  1 * int(runstrike) + int(balling);
 				stormup = (tornadeup && !tornadedown && !strikefalling&&!die)||(jumptor&&!strikefalling&&!tornadedown&&!die);
 				stormdown = tornadedown && !tornadeup && !strikefalling && !strikefall&&!die; 
-				hi = 16 - 16 * int(balling) - 16 * int(bottom);
-				di = 24; //- 12 * int(strikefalling)
+				hi = 16 - 18 * int(balling) - 18 * int(bottom);
+				di = 24 - 8 * int(balling); //- 12 * int(strikefalling)
 				hurt();
 				die = (life <= 0);
 				if (die) {
@@ -170,10 +169,11 @@
 				break;
 				case 5:
 				if (anim_special.currentFrame == 10) {
-					var sf:Special_fire = new Special_fire( x - (di+20) *scaleX, y - 25, -scaleX,objstock);
+					var sf:Special_fire = new Special_fire( x - (di+20) *scaleX, y - 25, -scaleX);
 					tabFire.push(sf);
+					sf.init(tabFire, blocstock);
 					//Carte.effectLayer.addChild(sf.bitmap);
-					effectLayer.addChild(sf);
+					parent.addChild(sf);
 				}	
 				break;
 			}
@@ -188,7 +188,7 @@
 				L = Cl[1];
 				var Co:int = X / T;
 				var Ls:int = (y + T - 1) / T;
-				if (checkSlopes( objstock[Ls][Co], objstock[Ls][Co], Ls, Co)) 	 	return	;
+				if (checkSlopes( blocstock[Ls][Co], blocstock[Ls][Co], Ls, Co)) 	 	return	;
 				
 				y += gravite; 							// déplace le perso sur Y
 				if (checkFall( L, di)) return ;
@@ -203,19 +203,20 @@
 				
 				Cl = checkLateral(C); X = Cl[0]; L = Cl[1];
 				y += 2 * gravite; 							// déplace le perso
-				var t:Tuiles;
+				var t:Bloc;
 				// tombe
 				for (C = (X - di) / T; C < (X + di) / T; C++) {					// vérifies toutes colonnes (grille) sur lesquelles se tient le perso
-					if (objstock[L][C].fr) {t = objstock[L][C];
+					if (blocstock[L][C].fr) {t = blocstock[L][C];
 					if (t.item) {
 						if (this.life+t.life < 100) this.life = this.life+t.life;
 						else this.life = 100;
 						if (this.power+t.power < 75) this.power = this.power + t.power;
 						else this.power = 75;
 						this.score = this.score+t.score;
-						t.unleash();
-						objstock[L][C]=[];
+						//t.unleash();
+						blocstock[L][C]=[];
 					}
+					
 					else if(t.destruct){
 						t.resist = t.resist - force[1];
 						if (t.resist <= 0) {
@@ -224,14 +225,15 @@
 							if (this.power+t.power < 75) this.power = this.power +t.power;
 							else this.power = 75;
 							this.score = this.score+t.score;
-							t.unleash();
-							objstock[L][C] = [];
+							//t.unleash();
+							blocstock[L][C] = [];
 						}
 						else {
 							aT = false;
 						}
 						
 					}
+					
 					else if ((t.solide||t.cloud) && y>=(L-1)* T) {	
 						stike_rock.gotoAndPlay(2);		// blocs solides
 						y = (L-1)* T;							// position du perso sur Y
@@ -255,18 +257,18 @@
 				L = Cl[1];
 				
 				Y = y += 1.5*gravite; 							// déplace le perso sur Y
-				var t:Tuiles;
+				var t:Bloc;
 				// tombe
 				for (C=(X-di)/T; C<(X+di)/T; C++) {					// vérifies toutes colonnes (grille) sur lesquelles se tient le perso	
-					if (objstock[L][C].fr) {t = objstock[L][C];
+					if (blocstock[L][C].fr) {t = blocstock[L][C];
 						if (t.item) {
 							if (this.life+t.life < 100) this.life = this.life+t.life;
 							else this.life = 100;
 							if (this.power+t.power < 75) this.power = this.power + t.power;
 							else this.power = 75;
 							this.score = this.score+t.score;
-							t.unleash();
-							objstock[L][C]=[];
+							//t.unleash();
+							blocstock[L][C]=[];
 						}
 						else if(t.destruct){
 								if (aT) {
@@ -277,14 +279,15 @@
 										if (this.power+t.power < 75) this.power = this.power + t.power;
 										else this.power = 75;
 										this.score = this.score+t.score;
-										t.unleash();
-										objstock[L][C]=[];
+										//t.unleash();
+										blocstock[L][C]=[];
 									}
 									else {
 										aT = false;
 									}
 								}
 							}
+						
 						else if ((t.solide||t.cloud) && y>=(L-1)* T) {			// blocs solides
 							y = (L-1)* T;							// position du perso sur Y
 							gravite=-1;
@@ -310,21 +313,22 @@
 
 				if(jumptor) Y = y += 7*gravite; 							// déplace le perso sur Y
 				else Y = y += 11*gravite; 							// déplace le perso sur Y
-				var t:Tuiles;
+				var t:Bloc;
 				// touche plafond
 				if (gravite<0) {									// si le perso saute
 					L = (Y-hi)/T;									// case occupée par le haut du perso
 					for (i = (X - di) / T; i < (X + di) / T; i++) {				// cases occupées par les limites X du perso
-						if (objstock[L][i].fr) {t = objstock[L][i];
+						if (blocstock[L][i].fr) {t = blocstock[L][i];
 							if (t.item) {
 								if (this.life+t.life < 100) this.life = this.life+t.life;
 								else this.life = 100;
 								if (this.power+t.power < 75) this.power = this.power + t.power;
 								else this.power = 75;
 								this.score = this.score+t.score;
-								t.unleash();
-								objstock[L][i]=[];
+								//t.unleash();
+								blocstock[L][i]=[];
 							}
+							
 							else if (t.destruct) {
 								if (aT) {
 									t.resist = t.resist - force[0] - force[1];
@@ -334,8 +338,8 @@
 										if (this.power+t.power < 75) this.power = this.power + t.power;
 										else this.power = 75;
 										this.score = this.score+t.score;
-										t.unleash();
-										objstock[L][i]=[];
+										//t.unleash();
+										blocstock[L][i]=[];
 									}
 									else {
 										aT = false;

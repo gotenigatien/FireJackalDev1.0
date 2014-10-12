@@ -3,7 +3,7 @@
 	import engine.Carte;
 	import flash.display.Sprite;
 	import flash.events.Event;
-	import solid.decor.Tuiles;
+	import solid.decor.Bloc;
 	
 	public class Special_fire extends Sprite {
 		private var speed:Number;
@@ -15,12 +15,11 @@
 		//private var blur:BlurFilter;
 		//private var colorTransform1:ColorTransform;
 		//public var display:Sprite;
-		private var T:int;
-		private var objstock:Array;
+		private var T:int=32;
+		private var blocstock:Array;
 		private var	tabFire:Array;
-		public function Special_fire(X:Number, Y:Number, way:int,ob:Array) {
-			x = X;y = Y;T = Carte.T;
-			tabFire = Carte.tabFire;objstock = ob;
+		public function Special_fire(X:Number, Y:Number, way:int) {
+			x = X;y = Y;
 			// constructor code
 			sens = way;	force = 8;
 			if(way==1)rotationY = 180;
@@ -43,6 +42,11 @@
 			this.bitmapData.draw(display);
 		}
 		*/
+		public function init(tb:Array, bs:Array) {
+			tabFire = tb;
+			blocstock = bs;
+			
+		}
 		private function update(e:Event):void{
 			this.x += speed * sens;
 			if (width < 70) { height = height * 1.1; width = width * 1.1;}
@@ -52,19 +56,21 @@
 		private function checkWall():void {
 			var C:int=int((x+sens*width/4)/T);
 			var L:int;
-			var t:Tuiles ;
+			var t:Bloc;
+			var la = this.y / T;
+			var lb = (this.y + height) / T;
 			// latéral	
-			for (L=this.y/T; L<(this.y+height)/T; L++) {					// vérifies toutes lignes (grille) sur lesquelles se tient le perso
-				if (objstock[L][C].fr) {t = objstock[L][C];
-				if (t.solide) {								// si le bord renconte un bloc solide en latéral (prévoir multiples tuiles)
+			for (L=la; L<lb; L++) {
+				if (blocstock[L][C].fr) { t = blocstock[L][C];
+				if (t.solide) {								// si le bord renconte un bloc solide en latéral (prévoir multiples Bloc)
 					// colle le perso au bord du bloc
 					if(t.destruct){
 						var a = force-t.resist;
 						t.resist = t.resist - force;
 						force = a;
 						if (t.resist <= 0) {
-							t.unleash();
-							objstock[L][C]=[];
+							//t.unleash();
+							blocstock[L][C]=[];
 						}
 					}
 					else kill();

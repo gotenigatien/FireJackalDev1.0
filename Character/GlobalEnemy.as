@@ -17,7 +17,7 @@ package character {
 		
 		protected function CheckProj():void {
 			var i:Object;var d:Number;var dy:Number;var a;
-			for each(i in Carte.tabFire){
+			for each(i in tabFire){
 				d =  Math.abs( i.x - this.x - this.di);
 				dy = Math.abs(i.y - this.y);
 				var b:Number = i.width / 3;
@@ -48,7 +48,7 @@ package character {
 				Cl = checkLateral( C);
 				X = Cl[0];L = Cl[1];
 				var Co:int = X / T;var Ls:int = (y + T - 1) / T;
-				if (checkSlopes( objstock[Ls][Co], objstock[Ls][Co], Ls, Co)) 	 	return	;
+				if (checkSlopes( blocstock[Ls][Co], blocstock[Ls][Co], Ls, Co)) 	 	return	;
 				
 				y += gravite; 							// déplace le perso sur Y
 				if (checkFall( L, di)) return ;

@@ -10,14 +10,15 @@
 		private var _txt:TextField;
 		private var _txtsc:TextField;
 		private var _formatTxt:TextFormat = new TextFormat();
-		private var comic:SFSlapstickComicShaded = new SFSlapstickComicShaded();
 		private var pl:CharObj;
+		//private var font:SFSlapstickComicShaded = new SFSlapstickComicShaded();
 		public function Score($pl:CharObj,s:int) {
 			// constructor code
 			sc = s;
 			pl = $pl;
-			//_formatTxt.font = "SF Slapstick Comic Shaded";
-			_formatTxt.font = comic.fontName;_formatTxt.size = 20;_formatTxt.color = 0x990000;
+			
+			//_formatTxt.font = sf.fontName;
+			_formatTxt.size = 20;_formatTxt.color = 0x990000;
 			
 			_txt = new TextField(); _txt.defaultTextFormat = _formatTxt; _txt.text = "SCORE :";
 			_txt.selectable = false;
