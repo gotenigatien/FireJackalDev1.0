@@ -5,7 +5,7 @@
 	import flash.display.Sprite;
 	import flash.events.TimerEvent;
 	import flash.utils.Timer;
-	import solid.decor.Tuiles;
+	import solid.decor.Bloc;
 	
 	
 	public class BuilderFarmer extends GlobalEnemy {
@@ -109,12 +109,13 @@
 						s_hit = run = false;right = (lk > 0);left = (lk < 0);
 					}
 					else {
-						s_hit = false;
+					run = s_hit = false;
 						if (!walkTime.running) {
 							walkTime.start();
-							if (ra <= 0.25) { left = true; right =run  = false; }
-							else if (ra > 0.25 && ra <= 0.5) { right = true; left =run  = false;}
-							else if (ra > 0.5 && ra <= 1) left = right =run = false;
+							ra = Math.random();
+							if (ra <= 0.37) { left = true; right =run  = false; }
+							else if (ra > 0.37 && ra <= 0.75) { right = true; left =run  = false;}
+							else if (ra > 0.75 && ra <= 1) left = right =run = false;
 						}
 					}
 					if (d <= 250 && d > 70&&dy<150) 	run = true;
@@ -144,10 +145,10 @@
 		}
 		
 		private function construct():void {
-		var C:int = (x+di*-scaleX) / T-scaleX;var L:int = (y / T);
-			if (blocstock[L][C].fr!=0) {
+		var C:int = (x + di * -scaleX) / T - scaleX; var L:int = (y / T);
+			if (!blocstock[L][C].fr) {
 				if(!BuildTime.running){
-			//		BuildTime.start();build = true;	return;
+					BuildTime.start();build = true;	return;
 				}
 			}
 			else build = false;	
@@ -157,13 +158,12 @@
 		}
 		private function putCase(event:TimerEvent):void
 		{	var C:int = (x + di * -scaleX) / T - scaleX;var L:int = (y / T);
-			if(blocstock[L][C].fr!=0){
-			var t= new Tuiles();	
-			t.x = C * T;t.y = L * T;				// position s
-			t.gotoAndStop(9);		// frame à afficher
-			t.solide = t.destruct = true;	
-			t.resist = 1;t.score = 2;t.fr = 9;
-			blocstock[L][C] = t;
+			if(!blocstock[L][C].fr){
+			var b = new Bloc();			// position s
+			b.solide = b.destruct = true;	
+			b.resist = 1;b.score = 2;b.fr = 9;
+			blocstock[L][C] =b;
+			addBox(L, C,9);
 			//objLayer.addChild(blocstock[L][C]);
 			}
 		}

@@ -38,7 +38,7 @@ package character {
 					finishTime.start();
 				}
 				else {
-					alpha = (8 - finishTime.currentCount) / 8;
+					alpha = (7 - finishTime.currentCount) / 7;
 					if (alpha <= 0.3)	died = true;
 				}
 		}

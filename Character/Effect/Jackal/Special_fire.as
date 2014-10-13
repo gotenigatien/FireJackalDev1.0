@@ -17,6 +17,7 @@
 		//public var display:Sprite;
 		private var T:int=32;
 		private var blocstock:Array;
+		private var objstock:Array;
 		private var	tabFire:Array;
 		public function Special_fire(X:Number, Y:Number, way:int) {
 			x = X;y = Y;
@@ -42,9 +43,10 @@
 			this.bitmapData.draw(display);
 		}
 		*/
-		public function init(tb:Array, bs:Array) {
+		public function init(tb:Array, bs:Array,os:Array) {
 			tabFire = tb;
 			blocstock = bs;
+			objstock = os;
 			
 		}
 		private function update(e:Event):void{
@@ -53,28 +55,38 @@
 			if (force <= 0) kill();
 			checkWall();
 		}
+		private function removeBox(L:int, C:int) {
+			C= (C % 26);
+			L = (L % 16);
+			objstock[L][C].gotoAndStop("vide");
+		}
 		private function checkWall():void {
-			var C:int=int((x+sens*width/4)/T);
+			var C:int=int((x+width/4)/T);
+			var Cd:int=int((x-sens*width/4)/T);
 			var L:int;
 			var t:Bloc;
+			var i:int;
 			var la = this.y / T;
 			var lb = (this.y + height) / T;
 			// latéral	
-			for (L=la; L<lb; L++) {
-				if (blocstock[L][C].fr) { t = blocstock[L][C];
-				if (t.solide) {								// si le bord renconte un bloc solide en latéral (prévoir multiples Bloc)
-					// colle le perso au bord du bloc
-					if(t.destruct){
-						var a = force-t.resist;
-						t.resist = t.resist - force;
-						force = a;
-						if (t.resist <= 0) {
-							//t.unleash();
-							blocstock[L][C]=[];
+			for (L = la; L < lb; L++) {
+				for (i = Cd; i <= C;i++ ){
+					if (blocstock[L][C].fr) { t = blocstock[L][C];
+						if (t.solide) {								
+							// colle le perso au bord du bloc
+							if(t.destruct){
+								var a = force-t.resist;
+								t.resist = t.resist - force;
+								force = a;
+								if (t.resist <= 0) {
+									//t.unleash();
+									removeBox(L, C);
+									blocstock[L][C]=[];
+								}
+							}
+							else kill();
 						}
 					}
-					else kill();
-				}
 				}
 			}
 		}

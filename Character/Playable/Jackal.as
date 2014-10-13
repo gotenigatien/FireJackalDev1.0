@@ -50,11 +50,7 @@
 			// constructor code
 			gravite = 1; speed = 4.5; sens = 0;power = 25;di = 24;hi = 16;jumpPuls = 13.5;life = 100;
 		}
-		/*override public function init():void {
-			effectLayer = Carte.effectLayer;
-			tabFire = Carte.tabFire;
-		}*/
-		
+				
 		public function GestureReaction(e:int):void{
 			switch (e){
 				case 0:
@@ -171,7 +167,7 @@
 				if (anim_special.currentFrame == 10) {
 					var sf:Special_fire = new Special_fire( x - (di+20) *scaleX, y - 25, -scaleX);
 					tabFire.push(sf);
-					sf.init(tabFire, blocstock);
+					sf.init(tabFire, blocstock,objStock);
 					//Carte.effectLayer.addChild(sf.bitmap);
 					parent.addChild(sf);
 				}	
@@ -181,7 +177,6 @@
 		//-------------------------------------------------------------------------------------------------------------------------------------------------------------
 			private function moveHero(dx:int):void{
 				if (!die) x += speed * dx; 					// déplace le perso sur X
-				
 				var X:Number = x;var L:int;var di:int = di; var C:int = (X + di * dx) / T;						// côté (grille) du perso concerné par la colission
 				Cl=checkLateral(C)
 				X = Cl[0];
@@ -189,18 +184,15 @@
 				var Co:int = X / T;
 				var Ls:int = (y + T - 1) / T;
 				if (checkSlopes( blocstock[Ls][Co], blocstock[Ls][Co], Ls, Co)) 	 	return	;
-				
 				y += gravite; 							// déplace le perso sur Y
 				if (checkFall( L, di)) return ;
 				if (checkRoof((y-hi)/T,X,di)) return;
 				// gravite
 				if (gravite++>T) gravite=T							// limite la gravité max à la taille d'une tuile
-				
 			}
 			//-------------------------------------------------------------------------------------------------------------------------------------------------------------
 		private function moveHero_strikefalling(dx:int):void{
 				var X:Number = x; var L:int; var di:int = di; var C:int = (X + di * dx) / T;
-				
 				Cl = checkLateral(C); X = Cl[0]; L = Cl[1];
 				y += 2 * gravite; 							// déplace le perso
 				var t:Bloc;
@@ -214,6 +206,7 @@
 						else this.power = 75;
 						this.score = this.score+t.score;
 						//t.unleash();
+						removeBox(L, C);
 						blocstock[L][C]=[];
 					}
 					
@@ -226,6 +219,7 @@
 							else this.power = 75;
 							this.score = this.score+t.score;
 							//t.unleash();
+							removeBox(L, C);
 							blocstock[L][C] = [];
 						}
 						else {
@@ -268,6 +262,7 @@
 							else this.power = 75;
 							this.score = this.score+t.score;
 							//t.unleash();
+							removeBox(L, C);
 							blocstock[L][C]=[];
 						}
 						else if(t.destruct){
@@ -280,6 +275,7 @@
 										else this.power = 75;
 										this.score = this.score+t.score;
 										//t.unleash();
+										removeBox(L, C);
 										blocstock[L][C]=[];
 									}
 									else {
@@ -326,6 +322,7 @@
 								else this.power = 75;
 								this.score = this.score+t.score;
 								//t.unleash();
+								removeBox(L, i);
 								blocstock[L][i]=[];
 							}
 							
@@ -339,6 +336,7 @@
 										else this.power = 75;
 										this.score = this.score+t.score;
 										//t.unleash();
+										removeBox(L, i);
 										blocstock[L][i]=[];
 									}
 									else {

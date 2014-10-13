@@ -8,11 +8,6 @@
 		public function Tuiles() {
 			// constructor code
 		}
-		public function destroy():void {
-		}
-		public function unleash():void {
-			parent.removeChild(this);
-		}
 		
 	}
 	

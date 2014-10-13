@@ -35,11 +35,11 @@ package character {
 		//----------------------------------------------------------------------------------------
 		protected var T:int;
 		protected var blocstock:Array;
+		protected var objStock:Array;
 		protected var tabFire:Array;
 		public function CharObj() {
 			T = Carte.T;
 			//----------------------------------------------
-			
 			myBevel = new BevelFilter();
 			myBevel.type = BitmapFilterType.INNER;
 			myBevel.distance = 5;
@@ -49,8 +49,9 @@ package character {
 			myBevel.blurY = 1;
 			
 		}
-		public function init(tb:Array):void {
+		public function init(tb:Array,os:Array):void {
 			tabFire = tb;
+			objStock = os;
 		}
 		public function motricite():void {
 			
@@ -92,6 +93,16 @@ package character {
 			}
 			return[x, L];	
 		}
+		protected function removeBox(L:int, C:int) {
+			C= (C % 26);
+			L = (L % 16);
+			objStock[L][C].gotoAndStop("vide");
+		}
+		protected function addBox(L:int, C:int,fr:int) {
+			C= (C % 26);
+			L = (L % 16);
+			objStock[L][C].gotoAndStop(fr);
+		}
 		private function checkLateral_sub1(t:Bloc,L:int,C:int) {
 			var dx:int = sens;
 			if(t.destruct){
@@ -105,7 +116,8 @@ package character {
 					else power = 75;
 					score = score+t.score;
 					//t.unleash();
-					blocstock[L][C] = [];						
+					blocstock[L][C] = [];
+					removeBox(L,C);						
 					}
 				}
 			}
@@ -120,7 +132,8 @@ package character {
 			else power = 75;
 			score = score+t.score;
 			//t.unleash();
-			blocstock[L][C]=[];
+			blocstock[L][C] = [];	
+			removeBox(L,C);
 		}
 		protected function checkFall(L:int,di:int):Boolean {
 			var i:int;
@@ -137,6 +150,7 @@ package character {
 							if (power+t.power < 75) power = power + t.power;
 							else power = 75;
 							//t.unleash();
+							removeBox(L,i);
 							blocstock[L][i]=[];
 						}// vérifies toutes colonnes (grille) sur lsquelles se tient le perso	
 					else if (t.solide && y>=(L-1)* T&&!t.jumper) {			// blocs solides
@@ -174,6 +188,7 @@ package character {
 							else power = 75;
 							score = score+t.score;
 							//t.unleash();
+							removeBox(H,i);
 							blocstock[H][i]=[];
 						}
 						else if (t.solide) {							// si la case n'est pas vide

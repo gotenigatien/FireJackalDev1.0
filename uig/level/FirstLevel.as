@@ -16,7 +16,6 @@
 		private function initialise() {
 			BitInit();
 			player.x=100;player.y=250;
-			createInterface();
 			AddAllLayers();
 		}
 		

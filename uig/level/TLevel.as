@@ -3,14 +3,12 @@ package uig.level {
 	import character.enemy.Goat;
 	import character.enemy.NormalFarmer;
 	import character.playable.Jackal;
-	import engine.Carte;
 	import engine.Controller;
 	import engine.Moteur;
 	import engine.Scrolling;
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
 	import solid.decor.Bloc;
-	import solid.decor.Tuiles;
 	import tools.library.CSV;
 	import uig.uig.GameIcon;
 	import uig.uig.LifeBar;
@@ -37,7 +35,6 @@ package uig.level {
 		private var lifebar:LifeBar;
 		private var powerBar:PowerBar;
 		private var Iscore:Score;
-		private var T:int=32;
 
 		private var Interface:Sprite = new Sprite();
 		private var grille:Sprite = new Sprite();
@@ -55,10 +52,12 @@ package uig.level {
 			createEnemy();
 			moteur.initialise(player, enemyStock,scrolling);
 			moteur.initLayer(enemyLayer);
-			scrolling.initialise(player, blocStock, objStock, grille);
-			scrolling.initLayer(objLayer);
+			scrolling.initialise(player, blocStock);
+			scrolling.initLayer(grille,objLayer);
+			objStock=scrolling.creeZone();
 			controller.initialise(player);
 			initInterface();
+			
 		}
 		private function initInterface():void {
 			gameicon = new GameIcon();
@@ -69,45 +68,27 @@ package uig.level {
 			lifebar.alpha = 0.6;lifebar.x = 80;lifebar.y = 20;lifebar.alpha = 0.65;
 			powerBar.x = 80;powerBar.y = 25 + lifebar.height;powerBar.alpha = 0.65;
 			Iscore.x = 600; Iscore.y = 10;
-			
-		}
-		
-		protected function createInterface():void {
 			Interface.addChild(lifebar);Interface.addChild(powerBar);Interface.addChild(Iscore);Interface.addChild(gameicon);
 		}
 		protected function AddAllLayers():void {
-			//stage.quality = "LOW";
+			stage.quality = "LOW";
 			addChild(grille)						// ajoute le décor 
 			grille.addChild(objLayer)							// ajoute le perso
 			grille.addChild(enemyLayer);
 			grille.addChild(player);// ajoute le perso
 			grille.addChild(effectLayer);// ajoute le perso
 			stage.addChild(Interface);
-			player.init(tabFire);
-			for each(var e in enemyStock) e.init(tabFire);	
+			player.init(tabFire,objStock);
+			for each(var e in enemyStock) e.init(tabFire,objStock);	
 			controller.run();
-			objStock = blocStock = tab_level = tab_enemy = tabFire=null;
+			blocStock = tab_level = tab_enemy = tabFire=null;
 		}
 		private function createDecor():void {
-			var i,j:int; var t:Tuiles; var b:Bloc;
+			var i,j:int; var b:Bloc;
 			var tl = tab_level.length;
 			var tl2 = tab_level[0].length;
-			objStock = new Array(17);
 			blocStock = new Array(tl);
-			for ( i = 0; i < 17; i++ ) { objStock[i] = new Array(25); }
-			for ( i = 0; i < tl; i++ ) { blocStock[i] = new Array(tl2); }
-			// création du level
-			for (i=0; i<17; i++){					// boucle sur les 20 colonnes
-				for (j=0; j<26; j++){				// boucle sur les 15 lignes de chaque colonne
-						t = new Tuiles();
-						t.x = j * T; t.y = i * T;
-						if (tab_level[i][j] > 0) t.gotoAndStop(tab_level[i][j]);			// frame à afficher
-						else { t.gotoAndStop("vide"); }
-						objStock[i][j] = t;
-						objLayer.addChild(t);					// ajout dela tuile à la grille
-				}
-			}
-			
+			for ( i = 0; i < tl; i++ ) { blocStock[i] = new Array(tl2); }			
 			for (i=0; i<tl; i++){					// boucle sur les 20 colonnes
 				for (var j:int=0; j<tl2; j++){				// boucle sur les 15 lignes de chaque colonne
 					if(tab_level[i][j]>0){// si la valeur de la tuile est supérieure à 0
