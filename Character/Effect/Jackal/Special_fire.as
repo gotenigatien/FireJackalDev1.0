@@ -51,6 +51,7 @@
 		}
 		private function update(e:Event):void{
 			this.x += speed * sens;
+			visibility();
 			if (width < 70) { height = height * 1.1; width = width * 1.1;}
 			if (force <= 0) kill();
 			checkWall();
@@ -59,6 +60,12 @@
 			C= (C % 26);
 			L = (L % 16);
 			objstock[L][C].gotoAndStop("vide");
+		}
+		private function visibility():void {
+				var V_dg:Boolean = x + width/2 > -parent.parent.x && x - width/2 < 800 - parent.parent.x;
+				var V_hb:Boolean = y + height > -parent.parent.y && y < 480 - parent.parent.y;
+				if ( V_dg && V_hb) visible = true;  else visible = false;
+				
 		}
 		private function checkWall():void {
 			var C:int=int((x+width/4)/T);

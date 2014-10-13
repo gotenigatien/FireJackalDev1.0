@@ -1,6 +1,7 @@
 ﻿package  character.enemy{
 	
 	import character.GlobalEnemy;
+	import flash.display.MovieClip;
 	import flash.events.TimerEvent;
 	import flash.utils.Timer;
 	
@@ -83,7 +84,7 @@
 			}
 		}
 		private function checkTargetCollision():void {
-			var a:Boolean = target.sens == 1 && lk < 60;var b:Boolean = target.sens == -1 && lk < 60;
+			var a:Boolean = target.sens == 1 && lk < 60; var b:Boolean = target.sens == -1 && lk < 60;
 			if (d <= 70 && dy  < 70) {
 					if((a)||(b)||target.sens==0){
 						if (target.aT && !imunTime.running) {

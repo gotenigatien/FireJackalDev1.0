@@ -77,8 +77,6 @@
 			}
 		}
 		
-		
-		
 		override public function motricite():void {
 			
 				// variables
@@ -177,16 +175,14 @@
 		//-------------------------------------------------------------------------------------------------------------------------------------------------------------
 			private function moveHero(dx:int):void{
 				if (!die) x += speed * dx; 					// déplace le perso sur X
-				var X:Number = x;var L:int;var di:int = di; var C:int = (X + di * dx) / T;						// côté (grille) du perso concerné par la colission
+				var C:int = (x + di * dx) / T;						// côté (grille) du perso concerné par la colission
 				Cl=checkLateral(C)
-				X = Cl[0];
-				L = Cl[1];
-				var Co:int = X / T;
+				var Co:int =  Cl[0] / T;
 				var Ls:int = (y + T - 1) / T;
 				if (checkSlopes( blocstock[Ls][Co], blocstock[Ls][Co], Ls, Co)) 	 	return	;
 				y += gravite; 							// déplace le perso sur Y
-				if (checkFall( L, di)) return ;
-				if (checkRoof((y-hi)/T,X,di)) return;
+				if (checkFall( Cl[1], di)) return ;
+				if (checkRoof((y-hi)/T,Cl[0],di)) return;
 				// gravite
 				if (gravite++>T) gravite=T							// limite la gravité max à la taille d'une tuile
 			}
@@ -198,26 +194,26 @@
 				var t:Bloc;
 				// tombe
 				for (C = (X - di) / T; C < (X + di) / T; C++) {					// vérifies toutes colonnes (grille) sur lesquelles se tient le perso
-					if (blocstock[L][C].fr) {t = blocstock[L][C];
-					if (t.item) {
-						if (this.life+t.life < 100) this.life = this.life+t.life;
+					if (blocstock[L][C].fr) {
+					if (blocstock[L][C].item) {
+						if (this.life+blocstock[L][C].life < 100) this.life = this.life+blocstock[L][C].life;
 						else this.life = 100;
-						if (this.power+t.power < 75) this.power = this.power + t.power;
+						if (this.power+blocstock[L][C].power < 75) this.power = this.power + blocstock[L][C].power;
 						else this.power = 75;
-						this.score = this.score+t.score;
+						this.score = this.score+blocstock[L][C].score;
 						//t.unleash();
 						removeBox(L, C);
 						blocstock[L][C]=[];
 					}
 					
-					else if(t.destruct){
-						t.resist = t.resist - force[1];
-						if (t.resist <= 0) {
-							if (this.life+t.life < 100) this.life = this.life+t.life;
+					else if(blocstock[L][C].destruct){
+						blocstock[L][C].resist = blocstock[L][C].resist - force[1];
+						if (blocstock[L][C].resist <= 0) {
+							if (this.life+blocstock[L][C].life < 100) this.life = this.life+blocstock[L][C].life;
 							else this.life = 100;
-							if (this.power+t.power < 75) this.power = this.power +t.power;
+							if (this.power+blocstock[L][C].power < 75) this.power = this.power +blocstock[L][C].power;
 							else this.power = 75;
-							this.score = this.score+t.score;
+							this.score = this.score+blocstock[L][C].score;
 							//t.unleash();
 							removeBox(L, C);
 							blocstock[L][C] = [];
@@ -228,10 +224,10 @@
 						
 					}
 					
-					else if ((t.solide||t.cloud) && y>=(L-1)* T) {	
+					else if ((blocstock[L][C].solide||blocstock[L][C].cloud) && y>=(L-1)* T) {	
 						stike_rock.gotoAndPlay(2);		// blocs solides
 						y = (L-1)* T;							// position du perso sur Y
-						gravite = -8-int(t.jumper)*t.upPulse;
+						gravite = -8-int(blocstock[L][C].jumper)*blocstock[L][C].upPulse;
 						strikefalling = aT = false;
 						return				
 					}
@@ -254,26 +250,26 @@
 				var t:Bloc;
 				// tombe
 				for (C=(X-di)/T; C<(X+di)/T; C++) {					// vérifies toutes colonnes (grille) sur lesquelles se tient le perso	
-					if (blocstock[L][C].fr) {t = blocstock[L][C];
-						if (t.item) {
-							if (this.life+t.life < 100) this.life = this.life+t.life;
+					if (blocstock[L][C].fr) {
+						if (blocstock[L][C].item) {
+							if (this.life+blocstock[L][C].life < 100) this.life = this.life+blocstock[L][C].life;
 							else this.life = 100;
-							if (this.power+t.power < 75) this.power = this.power + t.power;
+							if (this.power+blocstock[L][C].power < 75) this.power = this.power + blocstock[L][C].power;
 							else this.power = 75;
-							this.score = this.score+t.score;
+							this.score = this.score+blocstock[L][C].score;
 							//t.unleash();
 							removeBox(L, C);
 							blocstock[L][C]=[];
 						}
-						else if(t.destruct){
+						else if(blocstock[L][C].destruct){
 								if (aT) {
-									t.resist = t.resist - force[0]- force[1];
-									if (t.resist <= 0) {
-										if (this.life+t.life < 100) this.life = this.life+t.life;
+									blocstock[L][C].resist = blocstock[L][C].resist - force[0]- force[1];
+									if (blocstock[L][C].resist <= 0) {
+										if (this.life+blocstock[L][C].life < 100) this.life = this.life+blocstock[L][C].life;
 										else this.life = 100;
-										if (this.power+t.power < 75) this.power = this.power + t.power;
+										if (this.power+blocstock[L][C].power < 75) this.power = this.power + blocstock[L][C].power;
 										else this.power = 75;
-										this.score = this.score+t.score;
+										this.score = this.score+blocstock[L][C].score;
 										//t.unleash();
 										removeBox(L, C);
 										blocstock[L][C]=[];
@@ -284,7 +280,7 @@
 								}
 							}
 						
-						else if ((t.solide||t.cloud) && y>=(L-1)* T) {			// blocs solides
+						else if ((blocstock[L][C].solide||blocstock[L][C].cloud) && y>=(L-1)* T) {			// blocs solides
 							y = (L-1)* T;							// position du perso sur Y
 							gravite=-1;
 							 tornadedown = aT = gauche=droite=false;
@@ -314,27 +310,27 @@
 				if (gravite<0) {									// si le perso saute
 					L = (Y-hi)/T;									// case occupée par le haut du perso
 					for (i = (X - di) / T; i < (X + di) / T; i++) {				// cases occupées par les limites X du perso
-						if (blocstock[L][i].fr) {t = blocstock[L][i];
-							if (t.item) {
-								if (this.life+t.life < 100) this.life = this.life+t.life;
+						if (blocstock[L][i].fr) {
+							if (blocstock[L][i].item) {
+								if (this.life+blocstock[L][i].life < 100) this.life = this.life+blocstock[L][i].life;
 								else this.life = 100;
-								if (this.power+t.power < 75) this.power = this.power + t.power;
+								if (this.power+blocstock[L][i].power < 75) this.power = this.power + blocstock[L][i].power;
 								else this.power = 75;
-								this.score = this.score+t.score;
+								this.score = this.score+blocstock[L][i].score;
 								//t.unleash();
 								removeBox(L, i);
 								blocstock[L][i]=[];
 							}
 							
-							else if (t.destruct) {
+							else if (blocstock[L][i].destruct) {
 								if (aT) {
-									t.resist = t.resist - force[0] - force[1];
-									if (t.resist <= 0) {
-										if (this.life+t.life < 100) this.life = this.life+t.life;
+									blocstock[L][i].resist = blocstock[L][i].resist - force[0] - force[1];
+									if (blocstock[L][i].resist <= 0) {
+										if (this.life+blocstock[L][i].life < 100) this.life = this.life+blocstock[L][i].life;
 										else this.life = 100;
-										if (this.power+t.power < 75) this.power = this.power + t.power;
+										if (this.power+blocstock[L][i].power < 75) this.power = this.power + blocstock[L][i].power;
 										else this.power = 75;
-										this.score = this.score+t.score;
+										this.score = this.score+blocstock[L][i].score;
 										//t.unleash();
 										removeBox(L, i);
 										blocstock[L][i]=[];
@@ -344,7 +340,7 @@
 									}
 								}
 							}
-							else if (t.solide) {							// si la case n'est pas vide
+							else if (blocstock[L][i].solide) {							// si la case n'est pas vide
 								y = (L + 2) * T - hi;					// position du perso sur Y
 								gravite=1;
 								tornadeup=jumptor =aT = false;	

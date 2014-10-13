@@ -42,17 +42,24 @@ package character {
 					if (alpha <= 0.3)	died = true;
 				}
 		}
+		
+		private function visibility():void {
+				var V_dg:Boolean = x + di > -parent.parent.x && x - di < 800 - parent.parent.x;
+				var V_hb:Boolean = y + T > -parent.parent.y && y - hi < 480 - parent.parent.y;
+				if ( V_dg && V_hb) visible = true;  else visible = false;
+				
+		}
 		protected function moveEnemy():void {
 				x += speed * sens;
-				var C:int = (x + di * sens) / T; var X:Number;var L:int;
+				var C:int = (x + di * sens) / T;
+				visibility();
 				Cl = checkLateral( C);
-				X = Cl[0];L = Cl[1];
-				var Co:int = X / T;var Ls:int = (y + T - 1) / T;
+				var Co:int = Cl[0] / T;var Ls:int = (y + T - 1) / T;
 				if (checkSlopes( blocstock[Ls][Co], blocstock[Ls][Co], Ls, Co)) 	 	return	;
 				
 				y += gravite; 							// déplace le perso sur Y
-				if (checkFall( L, di)) return ;
-				if (checkRoof( (y - hi) / T, X, di)) return;
+				if (checkFall( Cl[1], di)) return ;
+				if (checkRoof( (y - hi) / T, Cl[0], di)) return;
 				// gravite
 				if (gravite++ > T) gravite = T;							// limite la gravité max à la taille d'une tuile
 		}

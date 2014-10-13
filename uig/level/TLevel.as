@@ -1,5 +1,6 @@
 package uig.level {
 	import character.enemy.BuilderFarmer;
+	import character.enemy.Chicken;
 	import character.enemy.Goat;
 	import character.enemy.NormalFarmer;
 	import character.playable.Jackal;
@@ -71,7 +72,7 @@ package uig.level {
 			Interface.addChild(lifebar);Interface.addChild(powerBar);Interface.addChild(Iscore);Interface.addChild(gameicon);
 		}
 		protected function AddAllLayers():void {
-			stage.quality = "LOW";
+			//stage.quality = "LOW";
 			addChild(grille)						// ajoute le décor 
 			grille.addChild(objLayer)							// ajoute le perso
 			grille.addChild(enemyLayer);
@@ -81,18 +82,18 @@ package uig.level {
 			player.init(tabFire,objStock);
 			for each(var e in enemyStock) e.init(tabFire,objStock);	
 			controller.run();
-			blocStock = tab_level = tab_enemy = tabFire=null;
+			blocStock = objStock=tab_level = tab_enemy = tabFire=null;
 		}
 		private function createDecor():void {
-			var i,j:int; var b:Bloc;
-			var tl = tab_level.length;
-			var tl2 = tab_level[0].length;
+			var i:int;
+			var tl:int = tab_level.length;
+			var tl2:int = tab_level[0].length;
 			blocStock = new Array(tl);
-			for ( i = 0; i < tl; i++ ) { blocStock[i] = new Array(tl2); }			
+			for (i = 0; i < tl; i++ ) { blocStock[i] = new Array(tl2); }			
 			for (i=0; i<tl; i++){					// boucle sur les 20 colonnes
 				for (var j:int=0; j<tl2; j++){				// boucle sur les 15 lignes de chaque colonne
 					if(tab_level[i][j]>0){// si la valeur de la tuile est supérieure à 0
-					b = new Bloc();
+					var b:Bloc = new Bloc();
 					// crée une tuile
 					speBloc(b, tab_level[i][j]);
 					b.fr= tab_level[i][j];
@@ -141,28 +142,32 @@ package uig.level {
 			return ;
 		}
 		private function createEnemy():void {
-			var i:int;
 			enemyStock = new Array(tab_enemy.length);
-			var e1:NormalFarmer ;var e2:BuilderFarmer;var e3:Goat ;
 			var tl:int = tab_enemy.length;
-			for (i = 0; i < tl; i++ ) {
+			for (var i:int = 0; i < tl; i++ ) {
 				if (tab_enemy[i][2] == 1) {
-					e1= new NormalFarmer(blocStock);			//
+					var e1:NormalFarmer = new NormalFarmer(blocStock); 	
 					e1.x = tab_enemy[i][0]; e1.y = tab_enemy[i][1]; e1.IAtype = tab_enemy[i][3]; e1.Etype = tab_enemy[i][2]; e1.setTarget(player); e1.InPos = [tab_enemy[i][0], tab_enemy[i][1]];
 					//Carte.effectLayer.addChild(e1.burning);
 					enemyStock[i] = e1;	enemyLayer.addChild(e1);
 				}
 				if (tab_enemy[i][2] == 2) {
-					e2= new BuilderFarmer(blocStock);			//
+					var e2:BuilderFarmer= new BuilderFarmer(blocStock);			//
 					e2.x = tab_enemy[i][0];	e2.y = tab_enemy[i][1];	e2.IAtype = tab_enemy[i][3];e2.Etype = tab_enemy[i][2];	e2.setTarget(player);e2.InPos = [tab_enemy[i][0], tab_enemy[i][1]];
 					//Carte.effectLayer.addChild(e2.burning);
 					enemyStock[i] = e2;	enemyLayer.addChild(e2);
 				}
 				if (tab_enemy[i][2] == 3) {
-					e3= new Goat(blocStock);	e3.x = tab_enemy[i][0];e3.y = tab_enemy[i][1];e3.IAtype = tab_enemy[i][3];e3.Etype = tab_enemy[i][2];e3.setTarget(player);e3.InPos = [tab_enemy[i][0], tab_enemy[i][1]];
+					var e3:Goat= new Goat(blocStock);	e3.x = tab_enemy[i][0];e3.y = tab_enemy[i][1];e3.IAtype = tab_enemy[i][3];e3.Etype = tab_enemy[i][2];e3.setTarget(player);e3.InPos = [tab_enemy[i][0], tab_enemy[i][1]];
 					//Carte.effectLayer.addChild(e3.burning);
 					enemyStock[i] = e3;
 					enemyLayer.addChild(e3);
+				}
+				if (tab_enemy[i][2] == 4) {
+					var e4:Chicken= new Chicken(blocStock);	e4.x = tab_enemy[i][0];e4.y = tab_enemy[i][1];e4.IAtype = tab_enemy[i][3];e4.Etype = tab_enemy[i][2];e4.setTarget(player);e4.InPos = [tab_enemy[i][0], tab_enemy[i][1]];
+					//Carte.effectLayer.addChild(e3.burning);
+					enemyStock[i] = e4;
+					enemyLayer.addChild(e4);
 				}
 			}
 		}

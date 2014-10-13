@@ -25,16 +25,17 @@
 		}
 		public function updateBar(life:int):void
 		{
-			 percentHP = life / maxHP;
-			 if (cHP > life) { clBar.scaleX =  clBar.scaleX - 0.01;cllife.x = cllife.x -1.8; }
-			 if (cHP < life) {clBar.scaleX =  clBar.scaleX + 0.01;cllife.x = cllife.x +1.8; }
-			 if (Math.abs(clBar.scaleX-percentHP) <0.01)	 cHP = life;
-			 
-			 if (percentHP > 0.5) {this.clBar.gotoAndStop(1);cllife.gotoAndStop(1)}
-			 else if (percentHP <= 0.5 && percentHP > 0.25) {this.clBar.gotoAndStop(2);cllife.gotoAndStop(2)}
-			 else if (percentHP <= 0.25) {this.clBar.gotoAndStop(3);cllife.gotoAndStop(3)}
-			 cllife.alpha = int(cHP!=0&&cHP!=-1);
-			 
+			if(life!=cHP&&life<=100){
+				 percentHP = life / maxHP;
+				 if (cHP > life) { clBar.scaleX =  clBar.scaleX - 0.01;cllife.x = cllife.x -1.8; }
+				 if (cHP < life) {clBar.scaleX =  clBar.scaleX + 0.01;cllife.x = cllife.x +1.8; }
+				 if (Math.abs(clBar.scaleX-percentHP) <0.01)	 cHP = life;
+				 
+				 if (percentHP > 0.5) {this.clBar.gotoAndStop(1);cllife.gotoAndStop(1)}
+				 else if (percentHP <= 0.5 && percentHP > 0.25) {this.clBar.gotoAndStop(2);cllife.gotoAndStop(2)}
+				 else if (percentHP <= 0.25) {this.clBar.gotoAndStop(3);cllife.gotoAndStop(3)}
+				 cllife.alpha = int(cHP!=0&&cHP!=-1);
+			}
 		}
 	}
 	

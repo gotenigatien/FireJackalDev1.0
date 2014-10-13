@@ -1,10 +1,10 @@
 package character {
 	import engine.Carte;
 	import flash.display.MovieClip;
-	import flash.utils.Timer;
-	import solid.decor.Bloc;
 	import flash.filters.BevelFilter;
 	import flash.filters.BitmapFilterType;
+	import flash.utils.Timer;
+	import solid.decor.Bloc;
 	public class CharObj extends MovieClip{
 		//-----------------------------------------------------
 		public var score:int;//A MODIFIER !!!!
@@ -76,22 +76,51 @@ package character {
 				filters=[];
 			}
 		}
-		
 		protected function checkLateral(C:int):Array {
 			var L:int;var L1:int = (y - hi) / T;var L2:int = y / T + 1;
 			
-			var t:Bloc;
 			for (L=L1; L<L2; L++) {
-				if (blocstock[L][C].fr) {t = blocstock[L][C];
-				if (t.solide) {				
-					checkLateral_sub1(t,L,C);// si le bord renconte un bloc solide en latéral (prévoir multiples Bloc)
+				if (blocstock[L][C].fr) {
+				if (blocstock[L][C].solide) {				
+					checkLateral_sub1(L,C);// si le bord renconte un bloc solide en latéral (prévoir multiples Bloc)
 					}
-				else	if (t.item && !hostile) {
-					checkLateral_sub2(t,L,C);
+				else	if (blocstock[L][C].item && !hostile) {
+					checkLateral_sub2(L,C);
 				}
 			}
 			}
 			return[x, L];	
+		}
+		private function checkLateral_sub1(L:int,C:int) {
+			if(blocstock[L][C].destruct){
+				if (aT) {
+					aT = false;
+					blocstock[L][C].resist = blocstock[L][C].resist - force[0] - force[1];
+					if (blocstock[L][C].resist <= 0) {
+					if (life+blocstock[L][C].life < 100) life = life+blocstock[L][C].life;
+					else life = 100;
+					if (power+blocstock[L][C].power < 75) power = power + blocstock[L][C].power;
+					else power = 75;
+					score = score+blocstock[L][C].score;
+					//t.unleash();
+					blocstock[L][C] = [];
+					removeBox(L,C);						
+					}
+				}
+			}
+			if (sens == 1) x = C * T - di;
+			else if (sens == -1) x = C * T + di+ T;				
+		}
+		private function checkLateral_sub2(L:int,C:int) {
+			
+			if (this.life+blocstock[L][C].life < 100) this.life = life+blocstock[L][C].life;
+			else life = 100;
+			if (power+blocstock[L][C].power < 75) power = power + blocstock[L][C].power;
+			else power = 75;
+			score = score+blocstock[L][C].score;
+			//t.unleash();
+			blocstock[L][C] = [];	
+			removeBox(L,C);
 		}
 		protected function removeBox(L:int, C:int) {
 			C= (C % 26);
@@ -103,67 +132,34 @@ package character {
 			L = (L % 16);
 			objStock[L][C].gotoAndStop(fr);
 		}
-		private function checkLateral_sub1(t:Bloc,L:int,C:int) {
-			var dx:int = sens;
-			if(t.destruct){
-				if (aT) {
-					aT = false;
-					t.resist = t.resist - force[0] - force[1];
-					if (t.resist <= 0) {
-					if (life+t.life < 100) life = life+t.life;
-					else life = 100;
-					if (power+t.power < 75) power = power + t.power;
-					else power = 75;
-					score = score+t.score;
-					//t.unleash();
-					blocstock[L][C] = [];
-					removeBox(L,C);						
-					}
-				}
-			}
-			if (dx == 1) x = C * T - di;
-			else if (dx == -1) x = C * T + di+ T;				
-		}
-		private function checkLateral_sub2(t:Bloc,L:int,C:int) {
-			
-			if (this.life+t.life < 100) this.life = life+t.life;
-			else life = 100;
-			if (power+t.power < 75) power = power + t.power;
-			else power = 75;
-			score = score+t.score;
-			//t.unleash();
-			blocstock[L][C] = [];	
-			removeBox(L,C);
-		}
 		protected function checkFall(L:int,di:int):Boolean {
 			var i:int;
 			var a:Boolean = false;
 			// tombe
 			var i2:int = (x - di) / T;
 			var i3:int = (x + di) / T;
-			var t:Bloc;
 			for (i = i2; i < i3; i++) {
-				if (blocstock[L][i].fr) {t = blocstock[L][i];
-					if (t.item&&!hostile) {
-							if (life+t.life < 100) life = life+t.life;
+				if (blocstock[L][i].fr) {
+					if (blocstock[L][i].item&&!hostile) {
+							if (life+blocstock[L][i].life < 100) life = life+blocstock[L][i].life;
 							else life = 100;
-							if (power+t.power < 75) power = power + t.power;
+							if (power+blocstock[L][i].power < 75) power = power + blocstock[L][i].power;
 							else power = 75;
 							//t.unleash();
-							removeBox(L,i);
 							blocstock[L][i]=[];
+							removeBox(L,i);
 						}// vérifies toutes colonnes (grille) sur lsquelles se tient le perso	
-					else if (t.solide && y>=(L-1)* T&&!t.jumper) {			// blocs solides
+					else if (blocstock[L][i].solide && y>=(L-1)* T&&!blocstock[L][i].jumper) {			// blocs solides
 						y = (L-1)* T									// position du perso sur Y
 						gravite = -int(pulse) * jumpPuls;			// annule et autorise le saut
 						a = true;return a;
 					}
-					else if (t.solide && y >= (L - 1) * T && t.jumper){
+					else if (blocstock[L][i].solide && y >= (L - 1) * T && blocstock[L][i].jumper){
 						y = (L-1)* T									// position du perso sur Y
 						gravite = - blocstock[L][i].upPulse;			// annule et autorise le saut
 						a = true;return a;
 					}
-					else if (t.cloud&&!cloudfall &&gravite>=0 && y >= (L - 1) * T && !t.jumper){
+					else if ( blocstock[L][i].cloud&&!cloudfall &&gravite>=0 && y >= (L - 1) * T && ! blocstock[L][i].jumper){
 						y = (L-1)* T									// position du perso sur Y
 						gravite = -int(pulse) * jumpPuls;			// annule et autorise le saut
 						a = true;return a;
@@ -180,18 +176,18 @@ package character {
 			var t:Bloc;
 			if (gravite<0) {		// si le perso saute
 				for (i=(X-di)/T; i<(X+di)/T; i++) {
-					if (blocstock[H][i].fr) { t = blocstock[H][i];
-						if (t.item&&!hostile) {
-							if (life+t.life < 100) life = life+t.life;
+					if (blocstock[H][i].fr) {
+						if (blocstock[H][i].item&&!hostile) {
+							if (life+blocstock[H][i].life < 100) life = life+blocstock[H][i].life;
 							else life = 100;
-							if (power+t.power < 75) power = power + t.power;
+							if (power+blocstock[H][i].power < 75) power = power + blocstock[H][i].power;
 							else power = 75;
-							score = score+t.score;
+							score = score+blocstock[H][i].score;
 							//t.unleash();
 							removeBox(H,i);
 							blocstock[H][i]=[];
 						}
-						else if (t.solide) {							// si la case n'est pas vide
+						else if (blocstock[H][i].solide) {							// si la case n'est pas vide
 							y = (H+2)* T-hi					// position du perso sur Y
 							gravite = 1;								// arrête le saut
 							a = true;

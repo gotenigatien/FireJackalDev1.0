@@ -29,7 +29,7 @@
 			updateBar(-1);
 		}
 		public function updateBar(power:int):void
-		{	if(power!=cPower){
+		{	if(power!=cPower&&power<=100){
 			percentP = power / maxP;
 			 if (cPower > power)  { clBar.scaleX =  clBar.scaleX - 0.01; flcursor.x = flcursor.x - 1.48; }
 			 if (cPower < power) {clBar.scaleX =  clBar.scaleX + 0.01;flcursor.x = flcursor.x + 1.48;}
