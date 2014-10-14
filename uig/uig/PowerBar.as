@@ -29,10 +29,10 @@
 			updateBar(-1);
 		}
 		public function updateBar(power:int):void
-		{	if(power!=cPower&&power<=100){
+		{	if(power!=cPower){
 			percentP = power / maxP;
-			 if (cPower > power)  { clBar.scaleX =  clBar.scaleX - 0.01; flcursor.x = flcursor.x - 1.48; }
-			 if (cPower < power) {clBar.scaleX =  clBar.scaleX + 0.01;flcursor.x = flcursor.x + 1.48;}
+			 if (cPower > power&&power<100)  { clBar.scaleX =  clBar.scaleX - 0.01; flcursor.x = flcursor.x - 1.48; }
+			 if (cPower < power&&power<100) {clBar.scaleX =  clBar.scaleX + 0.01;flcursor.x = flcursor.x + 1.48;}
 			 if (Math.abs(clBar.scaleX-percentP) <0.01) cPower = power;
 			if (percentP ==1) this.clBar.gotoAndStop(4);
 			 else if (percentP < 1 && percentP >= 0.66) this.clBar.gotoAndStop(3);

@@ -25,10 +25,10 @@
 		}
 		public function updateBar(life:int):void
 		{
-			if(life!=cHP&&life<=100){
+			if(life!=cHP){
 				 percentHP = life / maxHP;
-				 if (cHP > life) { clBar.scaleX =  clBar.scaleX - 0.01;cllife.x = cllife.x -1.8; }
-				 if (cHP < life) {clBar.scaleX =  clBar.scaleX + 0.01;cllife.x = cllife.x +1.8; }
+				 if (cHP > life&&life<100) { clBar.scaleX =  clBar.scaleX - 0.01;cllife.x = cllife.x -1.8; }
+				 if (cHP < life&&life<100) {clBar.scaleX =  clBar.scaleX + 0.01;cllife.x = cllife.x +1.8; }
 				 if (Math.abs(clBar.scaleX-percentHP) <0.01)	 cHP = life;
 				 
 				 if (percentHP > 0.5) {this.clBar.gotoAndStop(1);cllife.gotoAndStop(1)}
